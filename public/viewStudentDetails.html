@@ -1,0 +1,50 @@
+<div class="box">
+  <div ng-show="name==null">
+    <h1 class="error">Please contact your teacher....</h1>
+  </div>
+
+  <div class="icon-container" ng-click="goToTeacherDashBoard()">
+    <i class="fas fa-times"></i>
+  </div>
+  <div class="StudentName">
+    <h1>{{name}}</h1>
+  </div>
+
+
+  <div class="details">
+    <div class="personalDetails">
+      <h3>Personal Details :</h3>
+      <b>Email : </b> {{email}}<br>
+      <b>Mobile : </b> {{mobileNo}}<br>
+      <b>Address : </b> {{address}}<br>
+      <b>Mother Name : </b> {{motherName}}<br>
+      <b>Father Name : </b> {{fatherName}}<br>
+
+    </div>
+
+
+    <div class="SchoolDetails">
+      <h3>School Details :</h3>
+
+      <b>Class : </b> {{sclass}}<br>
+      <b>Roll No : </b> {{rollNo}}<br>
+      <b>Teacher Name : </b> {{classCoordinator}}<br>
+
+
+    </div>
+
+    <table class="table table-dark">
+      <tr>
+        <th scope="col">Subjects</th>
+        <th scope="col">Total Marks</th>
+        <th scope="col">Marks</th>
+      </tr>
+      <tr mdbTableCol ng-repeat="(key, value) in marks">
+        <td text-align='center'> {{key}} </td>
+        <td text-align='center'>100</td>
+        <td text-align='center'> {{ value }} </td>
+      </tr>
+    </table>
+    <br>
+  </div>
+</div>

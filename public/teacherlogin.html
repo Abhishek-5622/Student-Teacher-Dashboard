@@ -1,0 +1,19 @@
+<div class="student_main_container container">
+    <div class="panel panel-default mylogin">
+        <div class="panel-heading"> <b>TEACHER LOGIN</b> </div>
+        <br>
+        <p class="para_login">Please enter your login and password</p>
+        <form>
+            <input required class="form-control" type='text' ng-model="tname" placeholder="UserName"><br>
+            <input required class="form-control" type='email' ng-model="temail" placeholder="abc@gmail.com"><br>
+            <input required class="form-control" type='password' ng-model="tpassword" placeholder="Password"><br>
+            <a href="#!teacher-new_user">
+                <p class="para_login">New User</p>
+            </a>
+            <button type="button" class="btn btn-primary login" ng-model="singleModel"
+                ng-click="getTeacherData(tname,temail,tpassword)">
+                Login
+            </button>
+        </form>
+    </div>
+</div>

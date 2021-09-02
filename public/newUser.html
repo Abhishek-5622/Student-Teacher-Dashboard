@@ -1,0 +1,17 @@
+<div class="student_main_container container">
+    <div class="panel panel-default mylogin">
+        <div class="panel-heading"> <b>Sign up</b> </div>
+        <br>
+        <form>
+            <input required class="form-control" type='text' ng-model="new_uname" placeholder="UserName"><br>
+            <input required class="form-control" type='email' ng-model="new_uemail" placeholder="abc@gmail.com"><br>
+            <input required class="form-control" type='password' ng-model="new_upassword" placeholder="Password"><br>
+            <input required class="form-control" type='password' ng-model="confirm_new_upassword"
+                placeholder="Confirm Password"><br>
+            <button type="button" class="btn btn-primary login" ng-model="singleModel"
+                ng-click='Studentsignup(new_uname,new_uemail,new_upassword,confirm_new_upassword)'>
+                Sign up
+            </button>
+        </form>
+    </div>
+</div>

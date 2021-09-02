@@ -1,0 +1,248 @@
+/* ********************************CSS File**************************************** */
+
+*{
+    box-sizing: border-box;
+}
+
+body{
+    margin:0px;
+}
+
+.logo_img{
+    width: 21vw;
+    height: 13vh;
+}
+
+.heading{
+    height: 13vh;
+}
+
+.main_div{
+    background-color: black;
+}
+
+#welcome_div{
+    padding-top: 0.5rem;
+    padding-left: 1.5rem;
+}
+
+.main_container{
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    height: 78vh;
+}
+
+.student_phto,.teacher_phto{
+    border-radius: 55% 50%;
+    height: 26vh;
+    width: 14vw;
+    opacity: 0.7;
+    border:5px solid blue;
+}
+
+.teacher_phto:hover,.student_phto:hover{
+    opacity: 1;
+}
+
+.text_container{
+    margin-top: 0.5rem;
+    margin-left: 8rem;
+    font-size: 2.5rem;
+    color: white;
+}
+
+
+/* *************login**************** */
+.student_main_container{
+    display: flex;
+    background-color: aquamarine;;;
+    height: 83vh;
+    border-radius: 20px 20px;
+}
+
+.student_login{
+    margin-left: 22vw;
+    width: 30vw;
+    height: 40vh;
+    margin-top: 17vh;
+    margin-bottom: 3vh;
+    background-color: rgb(31, 30, 30);    
+}
+
+.space{
+    margin-left: 33rem;
+}
+
+.mylogin{
+    width:70%;
+    margin-left: 18%;
+    margin-top: 1.7rem;
+    height: 50%;
+    margin-top: 15rem;
+}
+
+.login_heading{
+    font-size: 2rem;
+    color: white;
+    padding-left: 37%;
+    padding-top: 2rem;
+}
+
+.uname{
+    border-radius: 30px 30px;
+    height: 3rem;
+    border: 2px solid blue;
+    width: 70%;
+    margin-bottom: 1rem;
+    padding-left: 2rem;
+    margin-left: 4rem;
+    font-size: 1.3rem;
+    background-color: rgb(31, 30, 30);
+    color: white;
+}
+
+.para_login{
+color: lightslategray;
+text-align: center;
+padding-top: 0.5rem;
+color: blue;
+}
+
+.login{
+    border-radius: 30px 30px;
+    height: 3rem;
+    border: 2px solid green;
+    width: 40%;
+    margin-bottom: 1rem;
+    padding-left: 1rem;
+    margin-left: 23rem;
+    font-size: 1.3rem;
+    background-color: rgb(31, 30, 30);
+    color: white;
+}
+
+/* ******************student details************************** */
+.StudentName{
+    text-align: center;
+    font-size: 2rem;
+    font-weight: bolder;
+    color: blue;
+}
+
+.details{
+    padding-left: 10rem;
+    font-size: 1.5rem;
+}
+
+.personalDetails,.SchoolDetails{
+border: 1px solid black;
+padding-bottom: 1.5rem;
+width: 80%;
+padding-left: 2rem;
+margin-bottom: 1.5rem;
+}
+
+.detail_table{
+    margin-bottom: 5rem;
+}
+
+.nav{
+    display: flex;
+    background-color: lightslategrey;
+    justify-content: flex-end;
+    height: 4rem;  
+}
+
+.logout_container{
+    padding-right: 3rem;
+    font-size: 1.5rem;
+    padding-top: 0.2rem;  
+    height: 100%;
+}
+
+/* **********************teacher DshBoard************************ */
+.TeacherName{
+    text-align: center;
+    font-size: 2rem;
+    font-weight: bolder;
+    color: blue;
+    padding-bottom: -2rem;
+}
+
+.allStudentDetails{
+    margin-bottom: 3rem;
+}
+
+.div_heading{
+    font-size: bolder;
+    color: blue;
+    text-decoration: underline;
+}
+
+.form_conatiner{
+    border: 2px solid blue;
+    margin-left: 20rem;
+    margin-right: 20rem;
+    margin-top: 5rem;
+    padding: 3rem;
+    background-color: black;
+}
+
+.mylabel{
+    color: white;
+    font-size:2rem;
+}
+
+.subject_name{
+    color: white;
+    font-size: 2rem;
+    text-align: center;
+}
+
+.size{
+    width: 10rem;
+    color: black;
+}
+
+.submit_btn{
+    width:25rem;
+    margin-left: 40rem;
+    margin-bottom: 20rem;
+}
+
+.error{
+    color: red;
+    padding-left: 10rem;
+}
+
+.box{
+    border: 2px solid black;
+    margin-left: 15rem;
+    margin-right: 15rem;
+    margin-bottom: 10rem;
+}
+
+.icon-container{
+    display: flex;
+    justify-content: flex-end;
+
+}
+
+.fa-times{
+    padding-right: 2rem;
+    padding-top: 2rem;
+    font-size: 2rem;
+}
+
+.fa-times:hover{
+    color: red;
+}
+
+.fa-angle-down:hover{
+    color: red;
+}
+
+.pagination_nav{
+    margin-left: 42%;
+}

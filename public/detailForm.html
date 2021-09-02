@@ -1,0 +1,129 @@
+<div class="div_heading">
+  <center>
+    <h1>Student Details</h1>
+  </center>
+</div>
+
+<div class="form_conatiner">
+  <div class="mb-3 ">
+    <label for="exampleFormControlInput6" class="form-label mylabel">Roll no: </label>
+    <input type="Number" class="form-control" placeholder="Enter Roll Number" ng-model="rollNo" required>
+  </div><br>
+
+  <div class="mb-3 ">
+    <label for="exampleFormControlInput1" class="form-label mylabel">Name: </label>
+    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Enter student Name"
+      ng-model="sName" required>
+  </div><br>
+
+  <div class="mb-3 ">
+    <label for="exampleFormControlInput2" class="form-label mylabel">Email address: </label>
+    <input type="email" class="form-control" id="exampleFormControlInput2" placeholder="name@example.com required"
+      ng-model="sEmail">
+  </div><br>
+
+  <div class="mb-3 ">
+    <label for="exampleFormControlInput3" class="form-label mylabel">Mobile no.: </label>
+    <input type="Number" class="form-control" id="exampleFormControlInput3" placeholder="Enter mobile number"
+      ng-model="sMobileno" required>
+  </div><br>
+
+  <div class="mb-3">
+    <label for="exampleFormControlTextarea4" class="form-label mylabel">Addrress: </label>
+    <textarea class="form-control" id="exampleFormControlTextarea4" rows="3" ng-model="sAddress"
+      placeholder="Enter Address" required></textarea>
+  </div>
+  <br>
+
+  <div class="mb-3 ">
+    <label for="exampleFormControlInput5" class="form-label mylabel">Mother Name: </label>
+    <input type="text" class="form-control" id="exampleFormControlInput5" placeholder="Enter mother name"
+      ng-model="sMotherName" required>
+  </div><br>
+
+
+  <div class="mb-3 ">
+    <label for="exampleFormControlInput6" class="form-label mylabel">Father Name: </label>
+    <input type="text" class="form-control" id="exampleFormControlInput6" placeholder="Enter father name"
+      ng-model="sFatherName" required>
+  </div><br>
+
+  <div class="mb-3 ">
+    <label for="exampleFormControlInput6" class="form-label mylabel">class coordinator: </label>
+    <input type="text" class="form-control" placeholder="Class coordinator name" ng-model="classCoordinator" required>
+  </div><br>
+
+  <div class="mb-3 ">
+    <label for="exampleFormControlInput6" class="form-label mylabel">class coordinator email: </label>
+    <input type="text" class="form-control" placeholder="Class coordinator email" ng-model="temail" required>
+  </div><br>
+
+  <div class="mb-3 ">
+    <label for="exampleFormControlInput6" class="form-label mylabel">class : </label>
+    <input type="text" class="form-control" placeholder="Enter class" ng-model="sclass" required>
+  </div><br>
+
+  <div class="mb-3 ">
+    <label for="exampleFormControlInput7" class="form-label mylabel">Marks: </label>
+    <table class="table">
+      <tr>
+        <td class="subject_name">Subject</td>
+        <td class="subject_name">Marks</td>>
+        <td class="subject_name">Total Marks</td>
+      </tr>
+      <tr>
+        <td class="subject_name">Maths</td>
+        <td class="subject_name"><input type="text" class="size" id="exampleFormControlInput7" ng-model="mathsMarks"
+            required>
+        </td>
+        <td class="subject_name"><input type="text" class="size" id="exampleFormControlInput8" value="100" disabled>
+        </td>
+      </tr>
+
+      <tr>
+        <td class="subject_name">Science</td>
+        <td class="subject_name"><input type="text" class="size" id="exampleFormControlInput9" ng-model="sciMark"
+            required>
+        </td>
+        <td class="subject_name"><input type="text" class="size" id="exampleFormControlInput10" value="100" disabled>
+        </td>
+      </tr>
+
+      <tr>
+        <td class="subject_name">English</td>
+        <td class="subject_name"><input type="text" class="size" id="exampleFormControlInput11" ng-model="EngMarks"
+            required>
+        </td>
+        <td class="subject_name"><input type="text" class="size" id="exampleFormControlInput12" value="100" disabled>
+        </td>
+      </tr>
+
+
+      <tr>
+        <td class="subject_name">Hindi</td>
+        <td class="subject_name"><input type="text" class="size" id="exampleFormControlInput13" ng-model="HindiMarks"
+            required>
+        </td>
+        <td class="subject_name"><input type="text" class="size" id="exampleFormControlInput14" value="100" disabled>
+        </td>
+      </tr>
+
+
+      <tr>
+        <td class="subject_name">Social Science</td>
+        <td class="subject_name"><input type="text" class="size" id="exampleFormControlInput15" ng-model="sstMarks"
+            required>
+        </td>
+        <td class="subject_name"><input type="text" class="size" id="exampleFormControlInput16" value="100" disabled>
+        </td>
+      </tr>
+    </table>
+
+  </div><br>
+
+
+  <button type="button" class="btn btn-primary submit_btn" ng-model="singleModel" ng-click="getstudentdetailsFn(rollNo,sName,sEmail,sMobileno,
+  sAddress,sMotherName,sFatherName,classCoordinator,temail,sclass,mathsMarks,sciMark,EngMarks,HindiMarks,sstMarks)">
+    Submit
+  </button>
+</div>

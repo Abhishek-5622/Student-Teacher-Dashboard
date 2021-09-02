@@ -1,0 +1,74 @@
+<div class="nav">
+  <!-- Button trigger modal -->
+  <button type="button" class="btn btn-primary" ng-model="singleModel" ng-click="FillStudentDetails()">
+    ADD STUDENTS
+  </button>
+
+  <a href='/Teachlogout'>
+    <button type="button" class="btn btn-success logout_container" ng-model="singleModel">
+      Logout
+    </button></a>
+</div>
+
+
+<div class="TeacherName">
+  <h1>{{arr[0].classCoordinator}}</h1>
+</div>
+
+<p font color="lightgrey">
+  <center>{{arr[0].temail}}</center>
+</p>
+
+<hr noshade="">
+<center>
+  <h2>Students Details</h2>
+</center>
+<table class="table table-striped table-hover">
+  <tr height="1.5rem">
+    <td ng-click='sort("rollNo")' scope="col">Roll Number
+      <i class="fas fa-angle-down"></i>
+      <!-- <i ng-show="sortKey=='rollNo' " ng-class="fas fa-angle-down"></i> -->
+    </td>
+    <td ng-click='sort("name")' scope="col">Student Name
+      <i class="fas fa-angle-down"></i>
+      <!-- <i ng-show="sortKey=='name' " ng-class="fas fa-angle-down"></i> -->
+    </td>
+    <td scope="col">Email</td>
+    <td scope="col">Mobile no.</td>
+    <td scope="col">Address</td>
+    <td scope="col">Mother Name</td>
+    <td scope="col">Father Name</td>
+    <td scope="col"></td>
+    <td scope="col"></td>
+  </tr>
+  <tr height="1.5rem" ng-repeat="student in arr | orderBy:sortKey:reverse">
+    <td text-align='center'>{{student.rollNo}}</td>
+    <td text-align='center'>{{student.name}}</td>
+    <td text-align='center'>{{student.email}}</td>
+    <td text-align='center'>{{student.mobileNo}}</td>
+    <td text-align='center'>{{student.address}}</td>
+    <td text-align='center'>{{student.motherName}}</td>
+    <td text-align='center'>{{student.fatherName}}</td>
+    <td text-align='center'>
+      <button type="button" class="btn btn-success" ng-model="singleModel" ng-click="openDetails(student.email)">
+        Open
+      </button>
+    </td>
+    <td text-align='center'>
+      <button type="button" class="btn btn-danger" ng-model="singleModel" ng-click="deleteDetails(student.email)">
+        X
+      </button>
+    </td>
+  </tr>
+
+</table>
+
+<nav class="pagination_nav" aria-label="...">
+  <ul class="pagination justify-content-center">
+   
+   <li class="page-item "><a class="page-link" ng-click="paginationFn(1)" >1</a></li>
+    <li class="page-item "><a class="page-link" ng-click="paginationFn(2)">2 </a></li>
+    <li class="page-item"><a class="page-link" ng-click="paginationFn(3)">3</a></li>
+    
+  </ul>
+</nav>

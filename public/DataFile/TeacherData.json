@@ -1,0 +1,353 @@
+[
+
+    {
+        "temail":"jyotimehta765@gmail.com",
+        "tname":"Jyoti Mehta",
+        "tno":"9823845623",
+        "position":"PGT Maths",
+        "sName": "Abhishek Mehta",
+        "sEmail": "abhishekmehta765@gmail.com",
+        "sMobie": "9899234678",
+        "sAdddress":"E-16/254, Sec-08,Rohini Delhi 110085",
+        "sClass": "V",
+        "sRollNo":1,
+        "sMarks":{
+            "Hindi":30,
+            "English":35,
+            "Maths":34,
+            "Science":37,
+            "Social Science":33,
+            "Information Technology":40
+        },
+        "sTeacher":"Mrs Tanvi",
+        "sMotherName":"Jyoti Mehta",
+        "sFatherName":"Surinder Mehta",
+        "sSchoolName":"Kendriya Vidyalaya"
+
+    },
+    {
+        "temail":"jyotimehta765@gmail.com",
+        "tname":"Jyoti Mehta", 
+        "tno":"9823845623",
+        "position":"PGT Maths",
+        "sName": "Rohit Sharma",
+        "sEmail": "rohitsharma23@gmail.com",
+        "sMobie": "9899674678",
+        "sAdddress":"H-16/24, Sec-21,Rohini Delhi 110085",
+        "sClass": "VII",
+        "sRollNo":16,
+        "sMarks":{
+            "Hindi":20,
+            "English":25,
+            "Maths":39,
+            "Science":27,
+            "Social Science":23,
+            "Information Technology":30
+        },
+        "sTeacher":"Mrs Tanvi",
+        "sMotherName":"Jhanavi Sharma",
+        "sFatherName":"Yogesh Sharma",
+        "sSchoolName":"Kendriya Vidyalaya"
+
+    },
+    {
+        "temail":"jyotimehta765@gmail.com",
+        "tname":"Jyoti Mehta", 
+        "tno":"9823845623",
+        "position":"PGT Maths",
+        "sName": "Ram Yadav",
+        "sEmail": "ramyadav23@gmail.com",
+        "sMobie": "9899444678",
+        "sAdddress":"K-16/242, Sec-21,Rohini Delhi 110085",
+        "sClass": "VII",
+        "sRollNo":19,
+        "sMarks":{
+            "Hindi":20,
+            "English":25,
+            "Maths":39,
+            "Science":27,
+            "Social Science":23,
+            "Information Technology":30
+        },
+        "sTeacher":"Mrs Tanvi",
+        "sMotherName":"Jhanavi Yadav",
+        "sFatherName":"Yogesh yadav",
+        "sSchoolName":"Kendriya Vidyalaya"
+
+    },
+    {
+        "temail":"jyotimehta765@gmail.com",
+        "tname":"Jyoti Mehta", 
+        "tno":"9823845623",
+        "position":"PGT Maths",
+        "sName": "Shaubhik Anand",
+        "sEmail": "shaubhikanand23@gmail.com",
+        "sMobie": "9899674678",
+        "sAdddress":"p-16/4, Sec-26 Delhi 110085",
+        "sClass": "VII",
+        "sRollNo":5,
+        "sMarks":{
+            "Hindi":20,
+            "English":25,
+            "Maths":39,
+            "Science":27,
+            "Social Science":23,
+            "Information Technology":30
+        },
+        "sTeacher":"Mrs Tanvi",
+        "sMotherName":"Jhanavi Anand",
+        "sFatherName":"Yogesh Anand",
+        "sSchoolName":"Kendriya Vidyalaya"
+
+    }
+    , {
+        "temail":"jyotimehta765@gmail.com",
+        "tname":"Jyoti Mehta", 
+        "tno":"9823845623",
+        "position":"PGT Maths",
+        "sName": "Karan Sharma",
+        "sEmail": "karansharma23@gmail.com",
+        "sMobie": "9899674678",
+        "sAdddress":"H-16/24, Sec-21,Rohini Delhi 110085",
+        "sClass": "VII",
+        "sRollNo":16,
+        "sMarks":{
+            "Hindi":20,
+            "English":25,
+            "Maths":39,
+            "Science":27,
+            "Social Science":23,
+            "Information Technology":30
+        },
+        "sTeacher":"Mrs Tanvi",
+        "sMotherName":"Jhanavi Sharma",
+        "sFatherName":"Yogesh Sharma",
+        "sSchoolName":"Kendriya Vidyalaya"
+
+    }
+    , {
+        "temail":"jyotimehta765@gmail.com",
+        "tname":"Jyoti Mehta", 
+        "tno":"9823845623",
+        "position":"PGT Maths",
+        "sName": "kartik",
+        "sEmail": "kartik23@gmail.com",
+        "sMobie": "9899674678",
+        "sAdddress":"H-16/24, Sec-21,Rohini Delhi 110085",
+        "sClass": "VII",
+        "sRollNo":7,
+        "sMarks":{
+            "Hindi":20,
+            "English":25,
+            "Maths":39,
+            "Science":27,
+            "Social Science":23,
+            "Information Technology":30
+        },
+        "sTeacher":"Mrs Tanvi",
+        "sMotherName":"sona",
+        "sFatherName":"deepak",
+        "sSchoolName":"Kendriya Vidyalaya"
+
+    }
+    , {
+        "temail":"jyotimehta765@gmail.com",
+        "tname":"Jyoti Mehta", 
+        "tno":"9823845623",
+        "position":"PGT Maths",
+        "sName": "Yash raj",
+        "sEmail": "yashraja23@gmail.com",
+        "sMobie": "9899674678",
+        "sAdddress":"H-1/34, Sec-21,Rohini Delhi 110085",
+        "sClass": "VII",
+        "sRollNo":6,
+        "sMarks":{
+            "Hindi":20,
+            "English":25,
+            "Maths":39,
+            "Science":27,
+            "Social Science":23,
+            "Information Technology":30
+        },
+        "sTeacher":"Mrs Tanvi",
+        "sMotherName":"Tanvu raj",
+        "sFatherName":"Virat raj",
+        "sSchoolName":"Kendriya Vidyalaya"
+
+    }
+    , {
+        "temail":"jyotimehta765@gmail.com",
+        "tname":"Jyoti Mehta", 
+        "tno":"9823845623",
+        "position":"PGT Maths",
+        "sName": "Rohit Sharma",
+        "sEmail": "rohitsharma23@gmail.com",
+        "sMobie": "9899674678",
+        "sAdddress":"H-16/24, Sec-21,Rohini Delhi 110085",
+        "sClass": "VII",
+        "sRollNo":4,
+        "sMarks":{
+            "Hindi":20,
+            "English":25,
+            "Maths":39,
+            "Science":27,
+            "Social Science":23,
+            "Information Technology":30
+        },
+        "sTeacher":"Mrs Tanvi",
+        "sMotherName":"Jhanavi Sharma",
+        "sFatherName":"Yogesh Sharma",
+        "sSchoolName":"Kendriya Vidyalaya"
+
+    }
+    , {
+        "temail":"jyotimehta765@gmail.com",
+        "tname":"Jyoti Mehta", 
+        "tno":"9823845623",
+        "position":"PGT Maths",
+        "sName": "Vishal Rana",
+        "sEmail": "rohitsharma23@gmail.com",
+        "sMobie": "9899674678",
+        "sAdddress":"H-16/24, Sec-21,Rohini Delhi 110085",
+        "sClass": "VII",
+        "sRollNo":22,
+        "sMarks":{
+            "Hindi":20,
+            "English":25,
+            "Maths":39,
+            "Science":27,
+            "Social Science":23,
+            "Information Technology":30
+        },
+        "sTeacher":"Mrs Tanvi",
+        "sMotherName":"Megha Rana",
+        "sFatherName":"Abhijeet Rana",
+        "sSchoolName":"Kendriya Vidyalaya"
+
+    },
+    {
+        "temail":"jyotimehta765@gmail.com",
+        "tname":"Jyoti Mehta", 
+        "tno":"9823845623",
+        "position":"PGT Maths",
+        "sName": "Rohit Sharma",
+        "sEmail": "rohitsharma23@gmail.com",
+        "sMobie": "9899674678",
+        "sAdddress":"H-16/24, Sec-21,Rohini Delhi 110085",
+        "sClass": "VII",
+        "sRollNo":16,
+        "sMarks":{
+            "Hindi":20,
+            "English":25,
+            "Maths":39,
+            "Science":27,
+            "Social Science":23,
+            "Information Technology":30
+        },
+        "sTeacher":"Mrs Tanvi",
+        "sMotherName":"Jhanavi Sharma",
+        "sFatherName":"Yogesh Sharma",
+        "sSchoolName":"Kendriya Vidyalaya"
+
+    },
+    {
+        "temail":"jyotimehta765@gmail.com",
+        "tname":"Jyoti Mehta", 
+        "tno":"9823845623",
+        "position":"PGT Maths",
+        "sName": "Ram Yadav",
+        "sEmail": "ramyadav23@gmail.com",
+        "sMobie": "9899444678",
+        "sAdddress":"K-16/242, Sec-21,Rohini Delhi 110085",
+        "sClass": "VII",
+        "sRollNo":19,
+        "sMarks":{
+            "Hindi":20,
+            "English":25,
+            "Maths":39,
+            "Science":27,
+            "Social Science":23,
+            "Information Technology":30
+        },
+        "sTeacher":"Mrs Tanvi",
+        "sMotherName":"Jhanavi Yadav",
+        "sFatherName":"Yogesh yadav",
+        "sSchoolName":"Kendriya Vidyalaya"
+
+    },
+    {
+        "temail":"jyotimehta765@gmail.com",
+        "tname":"Jyoti Mehta", 
+        "tno":"9823845623",
+        "position":"PGT Maths",
+        "sName": "Shaubhik Anand",
+        "sEmail": "shaubhikanand23@gmail.com",
+        "sMobie": "9899674678",
+        "sAdddress":"p-16/4, Sec-26 Delhi 110085",
+        "sClass": "VII",
+        "sRollNo":5,
+        "sMarks":{
+            "Hindi":20,
+            "English":25,
+            "Maths":39,
+            "Science":27,
+            "Social Science":23,
+            "Information Technology":30
+        },
+        "sTeacher":"Mrs Tanvi",
+        "sMotherName":"Jhanavi Anand",
+        "sFatherName":"Yogesh Anand",
+        "sSchoolName":"Kendriya Vidyalaya"
+
+    }
+    , {
+        "temail":"jyotimehta765@gmail.com",
+        "tname":"Jyoti Mehta", 
+        "tno":"9823845623",
+        "position":"PGT Maths",
+        "sName": "Karan Sharma",
+        "sEmail": "karansharma23@gmail.com",
+        "sMobie": "9899674678",
+        "sAdddress":"H-16/24, Sec-21,Rohini Delhi 110085",
+        "sClass": "VII",
+        "sRollNo":16,
+        "sMarks":{
+            "Hindi":20,
+            "English":25,
+            "Maths":39,
+            "Science":27,
+            "Social Science":23,
+            "Information Technology":30
+        },
+        "sTeacher":"Mrs Tanvi",
+        "sMotherName":"Jhanavi Sharma",
+        "sFatherName":"Yogesh Sharma",
+        "sSchoolName":"Kendriya Vidyalaya"
+
+    }
+    , {
+        "temail":"jyotimehta765@gmail.com",
+        "tname":"Jyoti Mehta", 
+        "tno":"9823845623",
+        "position":"PGT Maths",
+        "sName": "kartik",
+        "sEmail": "kartik23@gmail.com",
+        "sMobie": "9899674678",
+        "sAdddress":"H-16/24, Sec-21,Rohini Delhi 110085",
+        "sClass": "VII",
+        "sRollNo":7,
+        "sMarks":{
+            "Hindi":20,
+            "English":25,
+            "Maths":39,
+            "Science":27,
+            "Social Science":23,
+            "Information Technology":30
+        },
+        "sTeacher":"Mrs Tanvi",
+        "sMotherName":"sona",
+        "sFatherName":"deepak",
+        "sSchoolName":"Kendriya Vidyalaya"
+
+    }
+]

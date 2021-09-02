@@ -1,0 +1,30 @@
+{
+  "name": "student-portfolio",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "alert": "^5.0.10",
+    "angular-route": "^1.8.2",
+    "angular-ui-bootstrap": "^2.5.6",
+    "body-parser": "^1.19.0",
+    "bootstrap": "^5.1.0",
+    "cookie-parser": "^1.4.5",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "hbs": "^4.1.2",
+    "js-alert": "^1.0.4",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.0.0",
+    "passport": "^0.4.1",
+    "passport-jwt": "^4.0.0",
+    "popups": "^1.1.3",
+    "querystring": "^0.2.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
