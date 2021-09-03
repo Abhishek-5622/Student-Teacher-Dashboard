@@ -5,6 +5,7 @@
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken')
 require("dotenv").config();
+const validator = require('validator');
 
 // create schema
 const studentDataSchema = new mongoose.Schema(
@@ -20,13 +21,26 @@ const studentDataSchema = new mongoose.Schema(
         email: {
             type: String,
             require: true,
-            unique: true
+            unique: true,
+            validate:{
+                validator: validator.isEmail,
+                message: '{VALUE} is not a valid email',
+                isAsync: false
+              }
         },
         mobileNo: {
             type: Number,
             require: true
         },
         address: {
+            type: String,
+            require: true
+        },
+        city: {
+            type: String,
+            require: true
+        },
+        area: {
             type: String,
             require: true
         },
@@ -47,6 +61,10 @@ const studentDataSchema = new mongoose.Schema(
             require: true
         },
         temail: {
+            type: String,
+            require: true
+        },
+        school: {
             type: String,
             require: true
         },
@@ -77,6 +95,9 @@ const studentDataSchema = new mongoose.Schema(
     }
 )
 
+studentDataSchema.path('mobileNo').validate(function validatePhone() {
+    return ( this.mobileNo > 999999999 );
+  });
 
 
 // create collection(table)

@@ -15,28 +15,43 @@
 
 
 <div class="details">
-  <div class="personalDetails">
-    <h3>Personal Details :</h3>
-    <b>Email : </b> {{email}}<br>
-    <b>Mobile : </b> {{mobileNo}}<br>
-    <b>Address : </b> {{address}}<br>
-    <b>Mother Name : </b> {{motherName}}<br>
-    <b>Father Name : </b> {{fatherName}}<br>
+  <div class="panel panel-default">
 
+    <div class="panel-heading"> <b>
+        <h3>Personal Details :</h3>
+      </b> </div>
+    <br>
+    <div class="personal_detail">
+      <b>Email : </b> {{email}}<br>
+      <b>Mobile : </b> {{mobileNo}}<br>
+      <b>Address : </b> {{address}}<br>
+      <b>Area : </b> {{area}}<br>
+      <b>City : </b> {{city}}<br>
+      <b>Mother Name : </b> {{motherName}}<br>
+      <b>Father Name : </b> {{fatherName}}<br>
+      <br>
+    </div>
+  </div>
+
+  <div class="panel panel-default  ">
+
+    <div class="panel-heading"> <b>
+        <h3>School Details :</h3>
+      </b> </div>
+    <br>
+    <div class="personal_detail">
+      <b>School : </b> {{school}}<br>
+      <b>Class : </b> {{sclass}}<br>
+      <b>Roll No : </b> {{rollNo}}<br>
+      <b>Teacher Name : </b> {{classCoordinator}}<br>
+      <br>
+    </div>
   </div>
 
 
-  <div class="SchoolDetails">
-    <h3>School Details :</h3>
-
-    <b>Class : </b> {{sclass}}<br>
-    <b>Roll No : </b> {{rollNo}}<br>
-    <b>Teacher Name : </b> {{classCoordinator}}<br>
 
 
-  </div>
-
-  <table class="table table-dark">
+  <table class="table table-striped table-hover">
     <tr>
       <th scope="col">Subjects</th>
       <th scope="col">Total Marks</th>

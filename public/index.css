@@ -78,7 +78,7 @@ body{
     width:70%;
     margin-left: 18%;
     margin-top: 1.7rem;
-    height: 50%;
+    height: 55%;
     margin-top: 15rem;
 }
 
@@ -132,7 +132,9 @@ color: blue;
 
 .details{
     padding-left: 10rem;
+    padding-right: 10rem;
     font-size: 1.5rem;
+    
 }
 
 .personalDetails,.SchoolDetails{
@@ -217,12 +219,10 @@ margin-bottom: 1.5rem;
 }
 
 .box{
-    border: 2px solid black;
     margin-left: 15rem;
     margin-right: 15rem;
     margin-bottom: 10rem;
 }
-
 .icon-container{
     display: flex;
     justify-content: flex-end;
@@ -245,4 +245,19 @@ margin-bottom: 1.5rem;
 
 .pagination_nav{
     margin-left: 42%;
+}
+
+.searchBox{
+    margin-left: 40rem;
+    width:50%;
+    margin-bottom:3rem;
+}
+.personal_detail{
+    padding-left: 3rem;
+}
+.modalDiv{
+    padding-bottom: 1rem;
+}
+.modallable{
+    font-size: 1.7rem;
 }

@@ -13,6 +13,7 @@ const Techauth = require('./middleware/teachAuth')
 const UserRegister = require('./Model/register');
 const TeacherRegister = require('./Model/teacherRegister')
 const studentData = require('./Model/studentData')
+const schoolData = require('./Model/schoolRegister')
 var JSAlert = require("js-alert");
 const querystring = require('querystring');
 var passport = require('passport');
@@ -244,22 +245,25 @@ app.post('/seeStudentData', (req, res) => {
 //     })
 // })
 
-app.post('/seeAllStudentData', paginationResult(studentData) ,(req, res) => {
-         return res.json(res.paginationResult)
+app.post('/seeAllStudentData', paginationResult(studentData), (req, res) => {
+    return res.json(res.paginationResult)
 })
 
-app.post('/addStudentDetails', (req, res) => { 
+app.post('/addStudentDetails', (req, res) => {
     const studentDataObj = new studentData({
         rollNo: req.body.data.rollNo,
         name: req.body.data.name,
         email: req.body.data.email,
         mobileNo: req.body.data.mobileNo,
         address: req.body.data.address,
+        city: req.body.data.city,
+        area: req.body.data.area,
         motherName: req.body.data.motherName,
         fatherName: req.body.data.fatherName,
         classCoordinator: req.body.data.classCoordinator,
         sclass: req.body.data.sclass,
         temail: req.body.data.temail,
+        school: req.body.data.school,
         marks: req.body.data.marks
 
     })
@@ -271,7 +275,24 @@ app.post('/addStudentDetails', (req, res) => {
     return res.redirect('/teacher-dashboard');
 })
 
-app.post('/deleteStudent', (req, res) => { 
+app.post('/addSchoolDetails', (req, res) => {
+    // console.log(req.body.myObj)
+    const schoolDataObj = new schoolData({
+        schoolname: req.body.myObj.school_name,
+        schoolemail: req.body.myObj.school_email,
+        area: req.body.myObj.area,
+        city: req.body.myObj.city,
+    })
+    // console.log(schoolDataObj)
+    schoolDataObj.save().then(function (data) {
+        console.log("Data save", data);
+    }).catch(function (err) {
+        console.log(err);
+    })
+    return res.redirect('/teacher-dashboard');
+})
+
+app.post('/deleteStudent', (req, res) => {
     studentData.deleteOne({
         email: req.body.data.email
     }).then(function (data) {
@@ -279,22 +300,22 @@ app.post('/deleteStudent', (req, res) => {
     }).catch(function (err) {
         console.log(err)
     })
-    
+
 })
 
 
 function paginationResult(model) {
     return async (req, res, next) => {
         try {
-            const page = parseInt(req.query.page)||1
-          
+            const page = parseInt(req.query.page) || 1
+
             // const limit = parseInt(req.query.limit)
-            let limit = await model.countDocuments().exec()/3;
-            
-            if(page==1){
+            let limit = await model.countDocuments().exec() / 3;
+
+            if (page == 1) {
                 limit = Math.ceil(limit)
             }
-            else{
+            else {
                 limit = Math.ceil(limit)
             }
             const startIndex = (page - 1) * limit;
@@ -310,6 +331,8 @@ function paginationResult(model) {
         }
     }
 }
+
+
 // listen to a port
 app.listen(port, () => {
     console.log("server is running: " + port)

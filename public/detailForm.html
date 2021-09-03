@@ -34,6 +34,15 @@
       placeholder="Enter Address" required></textarea>
   </div>
   <br>
+  <div class="mb-3 ">
+    <label for="exampleFormControlInput6" class="form-label mylabel">city : </label>
+    <input type="text" class="form-control" placeholder="Enter city name" ng-model="city" required>
+  </div><br>
+
+  <div class="mb-3 ">
+    <label for="exampleFormControlInput6" class="form-label mylabel">Area : </label>
+    <input type="text" class="form-control" placeholder="Enter area " ng-model="area" required>
+  </div><br>
 
   <div class="mb-3 ">
     <label for="exampleFormControlInput5" class="form-label mylabel">Mother Name: </label>
@@ -62,6 +71,13 @@
     <label for="exampleFormControlInput6" class="form-label mylabel">class : </label>
     <input type="text" class="form-control" placeholder="Enter class" ng-model="sclass" required>
   </div><br>
+
+  <div class="mb-3 ">
+    <label for="exampleFormControlInput6" class="form-label mylabel">School : </label>
+    <input type="text" class="form-control" placeholder="Enter School name" ng-model="School" required>
+  </div><br>
+
+  
 
   <div class="mb-3 ">
     <label for="exampleFormControlInput7" class="form-label mylabel">Marks: </label>
@@ -123,7 +139,7 @@
 
 
   <button type="button" class="btn btn-primary submit_btn" ng-model="singleModel" ng-click="getstudentdetailsFn(rollNo,sName,sEmail,sMobileno,
-  sAddress,sMotherName,sFatherName,classCoordinator,temail,sclass,mathsMarks,sciMark,EngMarks,HindiMarks,sstMarks)">
+  sAddress,city,area,sMotherName,sFatherName,classCoordinator,temail,sclass,School,mathsMarks,sciMark,EngMarks,HindiMarks,sstMarks)">
     Submit
   </button>
 </div>
