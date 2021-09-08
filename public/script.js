@@ -1,7 +1,47 @@
 // *************************Script file *********************************
 
-
 var app = angular.module('portfolio', ['ngRoute', 'ui.bootstrap', 'ngTouch', 'ngAnimate'])
+
+// interceptor 
+app.config(function ($httpProvider) {
+    $httpProvider.interceptors.push(["$rootScope", function ($rootScope) {
+        return {    
+            // handle request response
+            responseError: function (response) {
+                console.log('response error started...');
+                //Check different response status.   
+                if (response.status === 400) {
+                    $rootScope.ErrorMsg = "Bad Request";
+                    $rootScope.showFeedBack($rootScope.ErrorMsg)
+                }
+                if (response.status === 401) {
+                    $rootScope.ErrorMsg = "Unauthorized Error";
+                    $rootScope.showFeedBack($rootScope.ErrorMsg)
+                }
+
+                if (response.status === 500) {
+                    $rootScope.ErrorMsg = "Internal Server Error";
+                    $rootScope.showFeedBack($rootScope.ErrorMsg)
+                }
+
+                if (response.status === 404) {
+                    $rootScope.ErrorMsg = "Request Not Found";
+                    $rootScope.showFeedBack($rootScope.ErrorMsg)
+                }
+                return response;
+            }
+        };
+    }]);
+});
+
+// run app
+app.run(["$rootScope", "$timeout", function ($rootScope, $timeout) {
+    $rootScope.showFeedBack = function (message) {
+        $rootScope.isVisible = true;
+        $rootScope.flashMessage = message;
+        $timeout(function () { $rootScope.isVisible = false }, 10000)
+    }
+}]);
 
 // routing
 app.config(function ($routeProvider) {
@@ -79,14 +119,18 @@ app.config(function ($routeProvider) {
 
 // controller
 app.controller('mainCtrl', function ($scope, $http, $rootScope, $location) {
+    // function call when page load
     $scope.init = function () {
         var email = localStorage.getItem('C_Email');
         $scope.getStudentDetails(email)
         var Temail = localStorage.getItem('T_Email');
         $scope.TeacherDetails2(Temail, 1)
         $scope.techEmail = Temail
+        $rootScope.SchoolNameArrFn();
+        $rootScope.areaNameArrFn();
     };
 
+    // go to student details page
     $scope.FillStudentDetails = function () {
         $location.path('/student-details')
     }
@@ -132,7 +176,7 @@ app.controller('mainCtrl', function ($scope, $http, $rootScope, $location) {
         $http.post("http://localhost:8000/getuser", {
             data
         }).then(function (response) {
-            // console.log(response)
+
             if (response.status == 200) {
                 // $window.location.href ='/student-dashboard?email='+uemail;  
                 localStorage.setItem('C_Email', uemail);
@@ -303,6 +347,7 @@ app.controller('mainCtrl', function ($scope, $http, $rootScope, $location) {
     //     })
     // }
 
+    // teacher details
     $scope.TeacherDetails2 = function (email, p) {
         console.log('myteacherEmail', email)
         $rootScope.arr = []
@@ -313,7 +358,6 @@ app.controller('mainCtrl', function ($scope, $http, $rootScope, $location) {
         $http.post("http://localhost:8000/seeAllStudentData?page=" + p, {
             data
         }).then(function (response) {
-            console.log("2nd page", response.data.result);
             $rootScope.teacherArr = response.data.result;
             // $rootScope.teacherArr = response.data
             for (let i = 0; i < $rootScope.teacherArr.length; i++) {
@@ -326,10 +370,12 @@ app.controller('mainCtrl', function ($scope, $http, $rootScope, $location) {
         })
     }
 
+    // pagination fn
     $scope.paginationFn = function (p) {
         $scope.pagination($scope.techEmail, p)
     }
 
+    // redirect and get data of all students
     $scope.pagination = function (email, p) {
         $location.path('/teacher-dashboard')
         $scope.TeacherDetails2(email, p)
@@ -346,43 +392,138 @@ app.controller('mainCtrl', function ($scope, $http, $rootScope, $location) {
         $location.path('/teacher-dashboard')
     }
 
+    // sort features of table
     $scope.sort = function (keyname) {
         $scope.sortKey = keyname;
         $scope.reverse = !$scope.reverse;
     }
 
+    // delete student details
     $scope.deleteDetails = function (email) {
-
         var data = {
             email: email
         }
         $http.post("http://localhost:8000/deleteStudent", {
             data
         }).then(function (response) {
-            console.log("2nd page", response);
             $location.path('/teacher-dashboard')
             $scope.TeacherDetails2($scope.techEmail, 1)
         }).catch(function (error) {
             console.log(error);
         })
-
     }
 
-
+    // go to analytic page
     $scope.analticFn = function () {
         $location.path("/analytic")
     }
 
+    // get all school name present (Db) in array
+    $rootScope.SchoolNameArrFn = function () {
+        $scope.SchoolNameList = [];
+        $http.get("http://localhost:8000/schoolName").then(function (response) {
+            // console.log("respone",response.data.schoolname)
+            for (let i = 0; i < response.data.length; i++) {
+                $scope.SchoolNameList.push(response.data[i].schoolname)
+            }
+        }).catch(function (error) {
+            console.log(error);
+        })
+    }
 
+    // // get all area name present (Db) in array
+    $rootScope.areaNameArrFn = function () {
+        $scope.areaNameList = [];
+        $http.get("http://localhost:8000/areaName").then(function (response) {
+            for (let i = 0; i < response.data.length; i++) {
+                $scope.areaNameList.push(response.data[i].area)
+            }
 
+            $scope.removeDuplicate($scope.areaNameList)
+
+        }).catch(function (error) {
+            console.log(error);
+        })
+    }
+
+    // function that remove duplicate from array
+    $scope.removeDuplicate = function (arr) {
+        $scope.uniqueNames = [arr[0]];
+        for (let i = 1; i < arr.length; i++) {
+            for (let j = 0; j < arr.length; j++) {
+                if (i != j && arr[i] == arr[j]) {
+                    $flg = 1;
+                    break;
+                }
+                else {
+                    $flg = 0;
+                }
+            }
+            if ($flg == 0) {
+                $scope.uniqueNames.push(arr[i])
+            }
+        }
+    }
+
+    // fetch student details on the basic of school name 
+    $scope.FetchAnalyticDetails = function (fetchSchool, limit) {
+
+        var data = {
+            school: fetchSchool,
+            limit: limit
+        }
+        $http.post("http://localhost:8000/indiviualSchoolStudent", { data }).then(function (res) {
+            $rootScope.indivualschoolStudentArr = res.data
+
+        }).catch(function (err) {
+            console.log(err)
+        })
+    }
+
+    // fetch top 3 student 
+    $scope.FetchTop3StudentDetails = function () {
+        $http.get("http://localhost:8000/topStudent").then(function (res) {
+            $rootScope.indivualschoolStudentArr = res.data
+        }).catch(function (err) {
+            console.log(err)
+        })
+    }
+
+    // fetch top 3 student od a area 
+    $scope.FetchTop3StudentOfArea = function (AreaName) {
+        var data = {
+            area: AreaName
+        }
+        $http.post("http://localhost:8000/topAreaStudent", { data }).then(function (res) {
+
+            $rootScope.indivualschoolStudentArr = res.data
+
+        }).catch(function (err) {
+            console.log(err)
+        })
+
+    }
+
+    // fetch student detail acc to percentage
+    $scope.fetchstudentAccToPer = function (schoolName, crteria) {
+        console.log(crteria)
+        var data = {
+            school: schoolName,
+            crteria: crteria
+        }
+        $http.post("http://localhost:8000/criteria", { data }).then(function (res) {
+            $rootScope.indivualschoolStudentArr = res.data
+        }).catch(function (err) {
+            console.log(err)
+        })
+    }
 });
 
 
-
-// create the controller and inject Angular's $scope
+// create the controller 
 app.controller('mainController', function ($scope, $http, $routeParams, $uibModal) {
     $scope.showPopup = function () {
-        user = { 'school_name': '', 'school_email': '', 'area': '' ,'city':''};
+        user = { 'school_name': '', 'school_email': '', 'area': '', 'city': '' };
         $scope.modalInstance = $uibModal.open({
             ariaLabelledBy: 'modal-title',
             ariaDescribedBy: 'modal-body',
@@ -399,7 +540,8 @@ app.controller('mainController', function ($scope, $http, $routeParams, $uibModa
     }
 });
 
-app.controller("ModelHandlerController", function ($scope, $uibModalInstance, $http) {
+// Model controller
+app.controller("ModelHandlerController", function ($scope, $uibModalInstance, $http, $rootScope) {
     $scope.school_name = user.school_name;
     $scope.school_email = user.school_email;
     $scope.area = user.area;
@@ -412,24 +554,22 @@ app.controller("ModelHandlerController", function ($scope, $uibModalInstance, $h
 
     $scope.ok = function () {
         $uibModalInstance.close('save');
-        console.log($scope.school_name)
-        var myObj = {
-            school_name:$scope.school_name,
-            school_email:$scope.school_email ,
-            area:$scope.area ,
-            city:$scope.city
-        }
-        console.log('bye',myObj)
 
-        $http.post("http://localhost:8000/addSchoolDetails",  {
+        var myObj = {
+            school_name: $scope.school_name,
+            school_email: $scope.school_email,
+            area: $scope.area,
+            city: $scope.city
+        }
+
+        $http.post("http://localhost:8000/addSchoolDetails", {
 
             myObj
         }).then(function (response) {
-            console.log("2nd page", response);
-            // $location.path('/teacher-dashboard')
-            // $scope.TeacherDetails2($scope.techEmail, 1)
+
+            $rootScope.SchoolNameArrFn();
         }).catch(function (error) {
-            console.log("Myerr",error);
+            console.log("Myerr", error);
         })
     }
 });

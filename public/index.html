@@ -28,7 +28,10 @@
             <img class="logo_img" src="static/posist.jpg" alt="Refresh the page">
         </div>
     </div>
-
+    <div class="flashmessage" ng-if="isVisible">
+     <h3>  {{flashMessage}}</h3> 
+    </div>
+   
     <ng-view></ng-view>
     
     

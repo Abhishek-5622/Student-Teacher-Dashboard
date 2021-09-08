@@ -68,7 +68,8 @@ const studentDataSchema = new mongoose.Schema(
             type: String,
             require: true
         },
-        marks: {
+        marks: 
+            {
             maths: {
                 type: Number,
                 require: true
@@ -90,8 +91,6 @@ const studentDataSchema = new mongoose.Schema(
                 require: true
             }
         }
-
-
     }
 )
 

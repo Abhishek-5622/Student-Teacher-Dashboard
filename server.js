@@ -109,8 +109,6 @@ app.post('/getuser', async (req, res) => {
 //     // res.render("studentDashboard",{email:req.query.email})
 // })
 
-
-
 // add passportjs middleware for authenication
 app.get('/student-dashboard', passport.authenticate('jwt', { session: false }),
     function (req, res) {
@@ -158,9 +156,7 @@ app.post('/addTeacher', async (req, res) => {
     })
     try {
         const token = await TeachReg.generateAuthToken()
-        console.log(token)
-
-
+        
         res.cookie('jwt', token, {
             expires: new Date(Date.now() + 100000000),
 
@@ -188,11 +184,12 @@ app.post('/addTeacher', async (req, res) => {
 //     // res.render("studentDashboard",{email:req.query.email})
 // })
 
-
+// auth for teacher dashboard
 app.get('/teacher-dashboard', Techauth, function (req, res) {
     return res.json({ 'email': req.query.email })
 })
 
+// student logout
 app.get('/logout', auth, async (req, res) => {
     try {
         req.user.tokens = req.user.tokens.filter((elem) => {
@@ -208,8 +205,8 @@ app.get('/logout', auth, async (req, res) => {
     }
 })
 
+// teacher logout
 app.get('/Teachlogout', Techauth, async (req, res) => {
-
     try {
         req.user.tokens = req.user.tokens.filter((elem) => {
             return elem.token != req.token;
@@ -224,8 +221,8 @@ app.get('/Teachlogout', Techauth, async (req, res) => {
     }
 })
 
+// see student data
 app.post('/seeStudentData', (req, res) => {
-    // console.log(req.body.data);
     studentData.findOne({
         email: req.body.data.email
     }).then(function (data) {
@@ -245,9 +242,11 @@ app.post('/seeStudentData', (req, res) => {
 //     })
 // })
 
+// see all student details with pagination
 app.post('/seeAllStudentData', paginationResult(studentData), (req, res) => {
     return res.json(res.paginationResult)
 })
+
 
 app.post('/addStudentDetails', (req, res) => {
     const studentDataObj = new studentData({
@@ -275,23 +274,24 @@ app.post('/addStudentDetails', (req, res) => {
     return res.redirect('/teacher-dashboard');
 })
 
+// add school details
 app.post('/addSchoolDetails', (req, res) => {
-    // console.log(req.body.myObj)
     const schoolDataObj = new schoolData({
         schoolname: req.body.myObj.school_name,
         schoolemail: req.body.myObj.school_email,
         area: req.body.myObj.area,
         city: req.body.myObj.city,
     })
-    // console.log(schoolDataObj)
+    
     schoolDataObj.save().then(function (data) {
-        console.log("Data save", data);
+        console.log("Data save");
     }).catch(function (err) {
         console.log(err);
     })
     return res.redirect('/teacher-dashboard');
 })
 
+// delete student
 app.post('/deleteStudent', (req, res) => {
     studentData.deleteOne({
         email: req.body.data.email
@@ -303,7 +303,193 @@ app.post('/deleteStudent', (req, res) => {
 
 })
 
+// get school name
+app.get('/schoolName', (req, res) => {
+    schoolData.find().then(function (data) {
+        return res.json(data)
+    }).catch(function (err) {
+        console.log(err)
+    })
+})
 
+// get area name
+app.get('/areaName', (req, res) => {
+    schoolData.find().then(function (data) {
+        return res.json(data)
+    }).catch(function (err) {
+        console.log(err)
+    })
+})
+
+// fetch all students that are of that school
+app.post('/indiviualSchoolStudent', (req, res) => {
+    
+    var schoolName = req.body.data.school;
+    var limit = req.body.data.limit;
+
+    var schoolPip = [
+        { $match: { school: schoolName } },
+        {
+            '$addFields': {
+                'marks': { $objectToArray: '$marks' }
+            }
+        },
+        { $unwind: "$marks" },
+        {
+            '$group': {
+                _id: { rollNo: "$rollNo", name: "$name", school: "$school", email: "$email" },
+                'total': { '$sum': '$marks.v' }
+            }
+        },
+        {
+            $project: {
+                'percent': { $round: [{ $multiply: [{ $divide: ["$total", 500] }, 100] }, 1] },
+                'totalMarks': '$total'
+            }
+        },
+        { $sort: { totalMarks: -1 } }
+    ]
+    if (limit == 3) {
+        schoolPip.push(
+            { $limit: limit }
+        )
+    }
+    else {
+        schoolPip = schoolPip
+    }
+    studentData.aggregate(schoolPip).then(function (data) {
+        return res.json(data)
+    }).catch(function (err) {
+        console.log(err)
+    })
+})
+
+// fetch all students on the basic of percentage 
+app.post('/criteria', (req, res) => { 
+    var schoolName = req.body.data.school;
+    var criteria = parseInt(req.body.data.crteria);
+    var schoolPip = [
+        { $match: { school: schoolName } },
+        {
+            '$addFields': {
+                'marks': { $objectToArray: '$marks' }
+            }
+        },
+        { $unwind: "$marks" },
+        {
+            '$group': {
+                _id: { rollNo: "$rollNo", name: "$name", school: "$school", email: "$email" },
+                'total': { '$sum': '$marks.v' }
+            }
+        },
+        {
+            $project: {
+                'percent': { $round: [{ $multiply: [{ $divide: ["$total", 500] }, 100] }, 1] },
+                'totalMarks': '$total'
+
+            }
+        },
+        {$match: {percent: {$gt: criteria}}} ,
+       
+        { $sort: { totalMarks: -1 } }
+    ]
+    
+    studentData.aggregate(schoolPip).then(function (data) {
+        // console.log(data)
+        return res.json(data)
+    }).catch(function (err) {
+        console.log(err)
+    })
+})
+
+// fetch top 3 students of that area 
+app.post('/topAreaStudent', (req, res) => {
+    var areaName = req.body.data.area;
+    schoolData.aggregate(
+        [
+            { $match: { area: areaName } }
+        ]
+    ).then(function (data) {
+        var schoolList = []
+        for (let i = 0; i < data.length; i++) {
+            schoolList.push(data[i].schoolname);
+        }
+        
+        var schoolAreaPip = [
+            {
+                $match: {
+                    school: {
+                        $in: schoolList
+                    }
+                }
+            },
+            {
+                '$addFields': {
+                    'marks': { $objectToArray: '$marks' }
+                }
+            },
+            { $unwind: "$marks" },
+            {
+                '$group': {
+                    _id: { rollNo: "$rollNo", name: "$name", school: "$school", email: "$email" },
+                    'total': { '$sum': '$marks.v' }
+                }
+            },
+            {
+                $project: {
+                    'percent': { $round: [{ $multiply: [{ $divide: ["$total", 500] }, 100] }, 1] },
+                    'totalMarks': '$total'
+                }
+            },
+            { $sort: { totalMarks: -1 } },
+            { $limit: 3 }
+        ]
+        studentData.aggregate(schoolAreaPip).then(function (data) {
+            return res.json(data)
+        }).catch(function (err) {
+            console.log(err)
+        })
+    }).catch(function (err) {
+        console.log(err)
+    })
+
+})
+
+// top 3 student of db
+app.get('/topStudent', (req, res) => {
+
+    var schoolPip2 = [
+        {
+            '$addFields': {
+                'marks': { $objectToArray: '$marks' }
+            }
+        },
+        { $unwind: "$marks" },
+        {
+            '$group': {
+                _id: { rollNo: "$rollNo", name: "$name", school: "$school", email: "$email" },
+                'total': { '$sum': '$marks.v' }
+            }
+        },
+        {
+            $project: {
+                'percent': { $round: [{ $multiply: [{ $divide: ["$total", 500] }, 100] }, 1] },
+                'totalMarks': '$total'
+            }
+        },
+        { $sort: { totalMarks: -1 } },
+        { $limit: 3 }
+
+    ]
+
+    studentData.aggregate(schoolPip2).then(function (data) {
+        return res.json(data)
+    }).catch(function (err) {
+        console.log(err)
+    })
+})
+
+// pagination function
 function paginationResult(model) {
     return async (req, res, next) => {
         try {
@@ -331,7 +517,6 @@ function paginationResult(model) {
         }
     }
 }
-
 
 // listen to a port
 app.listen(port, () => {

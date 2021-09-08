@@ -72,12 +72,20 @@
     <input type="text" class="form-control" placeholder="Enter class" ng-model="sclass" required>
   </div><br>
 
-  <div class="mb-3 ">
+  <!-- <div class="mb-3 ">
     <label for="exampleFormControlInput6" class="form-label mylabel">School : </label>
     <input type="text" class="form-control" placeholder="Enter School name" ng-model="School" required>
-  </div><br>
+  </div><br> -->
 
+  <div class="mb-3 ">
+    <label for="exampleFormControlInput6" class="form-label mylabel">School : </label><br>
+    <select class='schoolSelect' ng-model="School">
+      <option ng-repeat="x in SchoolNameList" value="{{x}}">{{x}}</option>
+      </select>
+  </div><br>
   
+  
+
 
   <div class="mb-3 ">
     <label for="exampleFormControlInput7" class="form-label mylabel">Marks: </label>
@@ -136,7 +144,8 @@
     </table>
 
   </div><br>
-
+ 
+ 
 
   <button type="button" class="btn btn-primary submit_btn" ng-model="singleModel" ng-click="getstudentdetailsFn(rollNo,sName,sEmail,sMobileno,
   sAddress,city,area,sMotherName,sFatherName,classCoordinator,temail,sclass,School,mathsMarks,sciMark,EngMarks,HindiMarks,sstMarks)">
