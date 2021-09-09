@@ -156,7 +156,7 @@ app.post('/addTeacher', async (req, res) => {
     })
     try {
         const token = await TeachReg.generateAuthToken()
-        
+
         res.cookie('jwt', token, {
             expires: new Date(Date.now() + 100000000),
 
@@ -249,6 +249,7 @@ app.post('/seeAllStudentData', paginationResult(studentData), (req, res) => {
 
 
 app.post('/addStudentDetails', (req, res) => {
+    console.log("myMark", req.body.data.marks)
     const studentDataObj = new studentData({
         rollNo: req.body.data.rollNo,
         name: req.body.data.name,
@@ -263,10 +264,11 @@ app.post('/addStudentDetails', (req, res) => {
         sclass: req.body.data.sclass,
         temail: req.body.data.temail,
         school: req.body.data.school,
-        marks: req.body.data.marks
-
+        marks:req.body.data.marks
     })
+
     studentDataObj.save().then(function (data) {
+        console.log(data)
         console.log("Data save");
     }).catch(function (err) {
         console.log(err);
@@ -282,7 +284,7 @@ app.post('/addSchoolDetails', (req, res) => {
         area: req.body.myObj.area,
         city: req.body.myObj.city,
     })
-    
+
     schoolDataObj.save().then(function (data) {
         console.log("Data save");
     }).catch(function (err) {
@@ -321,33 +323,27 @@ app.get('/areaName', (req, res) => {
     })
 })
 
-// fetch all students that are of that school
 app.post('/indiviualSchoolStudent', (req, res) => {
-    
+
     var schoolName = req.body.data.school;
     var limit = req.body.data.limit;
 
     var schoolPip = [
         { $match: { school: schoolName } },
-        {
-            '$addFields': {
-                'marks': { $objectToArray: '$marks' }
-            }
-        },
         { $unwind: "$marks" },
-        {
-            '$group': {
-                _id: { rollNo: "$rollNo", name: "$name", school: "$school", email: "$email" },
-                'total': { '$sum': '$marks.v' }
-            }
-        },
-        {
-            $project: {
-                'percent': { $round: [{ $multiply: [{ $divide: ["$total", 500] }, 100] }, 1] },
-                'totalMarks': '$total'
-            }
-        },
-        { $sort: { totalMarks: -1 } }
+        // {
+        //     '$group': {
+        //         _id: { rollNo: "$rollNo", name: "$name", school: "$school", email: "$email" },
+        //         'total': { '$sum': '$marks.v' }
+        //     }
+        // },
+        //  {
+        //      $project: {
+        //          'percent': { $round: [{ $multiply: [{ $divide: ["$total", 500] }, 100] }, 1] },
+        //          'totalMarks': '$total'
+        //      }
+        //  },
+        //  { $sort: { totalMarks: -1 } }
     ]
     if (limit == 3) {
         schoolPip.push(
@@ -358,23 +354,62 @@ app.post('/indiviualSchoolStudent', (req, res) => {
         schoolPip = schoolPip
     }
     studentData.aggregate(schoolPip).then(function (data) {
+        console.log(data)
         return res.json(data)
     }).catch(function (err) {
         console.log(err)
     })
 })
 
+// fetch all students that are of that school
+// app.post('/indiviualSchoolStudent', (req, res) => {
+
+//     var schoolName = req.body.data.school;
+//     var limit = req.body.data.limit;
+
+//     var schoolPip = [
+//         { $match: { school: schoolName } },
+//         {
+//             '$addFields': {
+//                 'marks': { $objectToArray: '$marks' }
+//             }
+//         },
+//         { $unwind: "$marks" },
+//         {
+//             '$group': {
+//                 _id: { rollNo: "$rollNo", name: "$name", school: "$school", email: "$email" },
+//                 'total': { '$sum': '$marks.v' }
+//             }
+//         },
+//         {
+//             $project: {
+//                 'percent': { $round: [{ $multiply: [{ $divide: ["$total", 500] }, 100] }, 1] },
+//                 'totalMarks': '$total'
+//             }
+//         },
+//         { $sort: { totalMarks: -1 } }
+//     ]
+//     if (limit == 3) {
+//         schoolPip.push(
+//             { $limit: limit }
+//         )
+//     }
+//     else {
+//         schoolPip = schoolPip
+//     }
+//     studentData.aggregate(schoolPip).then(function (data) {
+//         return res.json(data)
+//     }).catch(function (err) {
+//         console.log(err)
+//     })
+// })
+
 // fetch all students on the basic of percentage 
-app.post('/criteria', (req, res) => { 
+app.post('/criteria', (req, res) => {
     var schoolName = req.body.data.school;
     var criteria = parseInt(req.body.data.crteria);
     var schoolPip = [
         { $match: { school: schoolName } },
-        {
-            '$addFields': {
-                'marks': { $objectToArray: '$marks' }
-            }
-        },
         { $unwind: "$marks" },
         {
             '$group': {
@@ -389,11 +424,11 @@ app.post('/criteria', (req, res) => {
 
             }
         },
-        {$match: {percent: {$gt: criteria}}} ,
-       
+        { $match: { percent: { $gt: criteria } } },
+
         { $sort: { totalMarks: -1 } }
     ]
-    
+
     studentData.aggregate(schoolPip).then(function (data) {
         // console.log(data)
         return res.json(data)
@@ -414,7 +449,7 @@ app.post('/topAreaStudent', (req, res) => {
         for (let i = 0; i < data.length; i++) {
             schoolList.push(data[i].schoolname);
         }
-        
+
         var schoolAreaPip = [
             {
                 $match: {
@@ -423,11 +458,7 @@ app.post('/topAreaStudent', (req, res) => {
                     }
                 }
             },
-            {
-                '$addFields': {
-                    'marks': { $objectToArray: '$marks' }
-                }
-            },
+
             { $unwind: "$marks" },
             {
                 '$group': {
@@ -459,11 +490,7 @@ app.post('/topAreaStudent', (req, res) => {
 app.get('/topStudent', (req, res) => {
 
     var schoolPip2 = [
-        {
-            '$addFields': {
-                'marks': { $objectToArray: '$marks' }
-            }
-        },
+
         { $unwind: "$marks" },
         {
             '$group': {

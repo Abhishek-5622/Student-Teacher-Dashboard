@@ -5,7 +5,7 @@ var app = angular.module('portfolio', ['ngRoute', 'ui.bootstrap', 'ngTouch', 'ng
 // interceptor 
 app.config(function ($httpProvider) {
     $httpProvider.interceptors.push(["$rootScope", function ($rootScope) {
-        return {    
+        return {
             // handle request response
             responseError: function (response) {
                 console.log('response error started...');
@@ -245,14 +245,13 @@ app.controller('mainCtrl', function ($scope, $http, $rootScope, $location) {
             sclass: sclass,
             temail: temail,
             school: school,
-            marks: {
-                maths: maths,
-                science: science,
-                english: english,
-                hindi: hindi,
-                sst: sst
-            }
-
+            marks: [
+                { maths: maths },
+                { science: science },
+                { english: english },
+                { hindi: hindi },
+                { sst: sst }
+            ]
         }
         $http.post("http://localhost:8000/addStudentDetails", {
             data
@@ -497,7 +496,7 @@ app.controller('mainCtrl', function ($scope, $http, $rootScope, $location) {
     }
 
     // cancel form => go to analytic
-    $scope.cancaeldetailsFn = function(){
+    $scope.cancaeldetailsFn = function () {
         $location.path('/teacher-dashboard')
     }
 });

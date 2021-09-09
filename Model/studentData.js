@@ -22,11 +22,11 @@ const studentDataSchema = new mongoose.Schema(
             type: String,
             require: true,
             unique: true,
-            validate:{
+            validate: {
                 validator: validator.isEmail,
                 message: '{VALUE} is not a valid email',
                 isAsync: false
-              }
+            }
         },
         mobileNo: {
             type: Number,
@@ -62,41 +62,56 @@ const studentDataSchema = new mongoose.Schema(
         },
         temail: {
             type: String,
-            require: true
+            require: true,
+            validate: {
+                validator: validator.isEmail,
+                message: '{VALUE} is not a valid email',
+                isAsync: false
+            }
         },
         school: {
             type: String,
             require: true
         },
-        marks: 
-            {
-            maths: {
-                type: Number,
-                require: true
-            },
-            science: {
-                type: Number,
-                require: true
-            },
-            english: {
-                type: Number,
-                require: true
-            },
-            hindi: {
-                type: Number,
-                require: true
-            },
-            sst: {
-                type: Number,
-                require: true
-            }
-        }
+        marks:
+            [
+                {
+                    maths: {
+                        type: Number,
+                        require: true
+                    }
+                },
+                {
+                    science: {
+                        type: Number,
+                        require: true
+                    }
+                },
+                {
+                    english: {
+                        type: Number,
+                        require: true
+                    }
+                },
+                {
+                    hindi: {
+                        type: Number,
+                        require: true
+                    }
+                },
+                {
+                    sst: {
+                        type: Number,
+                        require: true
+                    }
+                }
+            ]
     }
 )
 
 studentDataSchema.path('mobileNo').validate(function validatePhone() {
-    return ( this.mobileNo > 999999999 );
-  });
+    return (this.mobileNo > 999999999);
+});
 
 
 // create collection(table)
