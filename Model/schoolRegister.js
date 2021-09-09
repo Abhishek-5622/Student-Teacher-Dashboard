@@ -14,11 +14,11 @@ const SchoolSchema = new mongoose.Schema(
             type: String,
             require: true,
             unique: true,
-            validate:{
+            validate: {
                 validator: validator.isEmail,
                 message: '{VALUE} is not a valid email',
                 isAsync: false
-              }
+            }
         },
         area: {
             type: String,
@@ -28,7 +28,7 @@ const SchoolSchema = new mongoose.Schema(
             type: String,
             require: true
         }
-        
+
     }
 )
 

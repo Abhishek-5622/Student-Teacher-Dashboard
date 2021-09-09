@@ -325,28 +325,6 @@ app.controller('mainCtrl', function ($scope, $http, $rootScope, $location) {
 
     }
 
-    // // teacher details
-    // $scope.TeacherDetails = function (email) {
-    //     $rootScope.arr = []
-    //     var data = {
-    //         email: email
-    //     }
-
-    //     $http.post("http://localhost:8000/seeAllStudentData", {
-    //         data
-    //     }).then(function (response) {
-    //         console.log(response.data.result);
-    //         $rootScope.teacherArr = response.data.result;
-    //         for (let i = 0; i < $rootScope.teacherArr.length; i++) {
-    //             if ($rootScope.teacherArr[i].temail === email) {
-    //                 $rootScope.arr.push($rootScope.teacherArr[i]);
-    //             }
-    //         }
-    //     }).catch(function (error) {
-    //         console.log(error);
-    //     })
-    // }
-
     // teacher details
     $scope.TeacherDetails2 = function (email, p) {
         console.log('myteacherEmail', email)
@@ -431,7 +409,7 @@ app.controller('mainCtrl', function ($scope, $http, $rootScope, $location) {
         })
     }
 
-    // // get all area name present (Db) in array
+    // get all area name present (Db) in array
     $rootScope.areaNameArrFn = function () {
         $scope.areaNameList = [];
         $http.get("http://localhost:8000/areaName").then(function (response) {
@@ -516,6 +494,11 @@ app.controller('mainCtrl', function ($scope, $http, $rootScope, $location) {
         }).catch(function (err) {
             console.log(err)
         })
+    }
+
+    // cancel form => go to analytic
+    $scope.cancaeldetailsFn = function(){
+        $location.path('/teacher-dashboard')
     }
 });
 

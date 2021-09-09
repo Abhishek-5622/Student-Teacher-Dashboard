@@ -17,8 +17,8 @@ opts.jwtFromRequest = cookieExtractor;
 
 module.exports = function (passport) {
     passport.use(new JwtStrategy(opts, function (jwtPayload, done) {
-        console.log(opts)
-        console.log("jwtPayload " + JSON.stringify(jwtPayload._id))
+
+        // console.log("jwtPayload " + JSON.stringify(jwtPayload._id))
 
         TeacherRegister.findOne({ _id: jwtPayload._id }).then(function (data) {
             console.log(data)

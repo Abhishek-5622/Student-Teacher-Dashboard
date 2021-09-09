@@ -209,7 +209,7 @@ margin-bottom: 1.5rem;
 
 .submit_btn{
     width:25rem;
-    margin-left: 40rem;
+    /* margin-left: 40rem; */
     margin-bottom: 20rem;
 }
 
@@ -297,4 +297,8 @@ margin-bottom: 1.5rem;
 .flashmessage{
     color: red;
     margin-left: 5rem;
+}
+.bt_dv{
+    display: flex;
+    justify-content: space-around
 }
