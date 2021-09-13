@@ -2,6 +2,7 @@
 
 // require
 require('dotenv').config();
+const ObjectID = require('mongodb').ObjectId;
 require('./Db/conn');
 var express = require("express")
 var bodyParser = require("body-parser")
@@ -10,10 +11,13 @@ const cookieParser = require('cookie-parser')
 const hbs = require('hbs')
 const auth = require('./middleware/auth')
 const Techauth = require('./middleware/teachAuth')
+const adminauth = require('./middleware/adminAuth')
 const UserRegister = require('./Model/register');
 const TeacherRegister = require('./Model/teacherRegister')
 const studentData = require('./Model/studentData')
+const adminRegister = require('./Model/adminRegister')
 const schoolData = require('./Model/schoolRegister')
+const { cityRegister, regionRegister, areaRegister } = require('./Model/schoolRegister')
 var JSAlert = require("js-alert");
 const querystring = require('querystring');
 var passport = require('passport');
@@ -53,7 +57,7 @@ app.post('/add', async (req, res) => {
         // set cookies
         res.cookie('jwt', token, {
             expires: new Date(Date.now() + 10000000),
-            httpOnly: true
+
         })
         res.redirect('/student-dashboard');
     }
@@ -61,6 +65,77 @@ app.post('/add', async (req, res) => {
         console.log(err)
     }
 })
+
+// admin signup
+app.post('/addNewAdmin', async (req, res) => {
+    const adminReg = new adminRegister({
+        name: req.body.data.name,
+        email: req.body.data.email,
+        password: req.body.data.password
+    })
+    try {
+        // generate token
+        const token = await adminReg.generateAuthToken()
+
+        // set cookies
+        res.cookie('jwt', token, {
+            expires: new Date(Date.now() + 10000000),
+
+        })
+        res.redirect('/auth-dashboard');
+    }
+    catch (err) {
+        console.log(err)
+    }
+})
+
+
+app.post('/adminAuth', async (req, res) => {
+    try {
+        // Get all data
+        var name = req.body.data.name;
+        var email = req.body.data.email;
+        var password = req.body.data.password;
+
+        const check = await adminRegister.findOne({
+            email: email,
+            password: password
+        })
+        if (check !== null) {
+            // create token
+            const token = await check.generateAuthToken();
+            console.log(token)
+            // set cookies
+            res.cookie('jwt', token, {
+                expires: new Date(Date.now() + 10000000)
+            })
+            // verify name
+            if (check.name == name) {
+                console.log("Admin login successfully")
+                return res.redirect('/auth-dashboard');
+            }
+            else {
+                alert('Enter valid details')
+            }
+        }
+        else {
+            JSAlert.alert("Enter valid details");
+        }
+    }
+    catch (err) {
+        console.log(err);
+    }
+
+
+
+
+})
+
+
+app.get('/auth-dashboard',
+    function (req, res) {
+        return res.send('Hi')
+    })
 
 // login
 app.post('/getuser', async (req, res) => {
@@ -221,6 +296,22 @@ app.get('/Teachlogout', Techauth, async (req, res) => {
     }
 })
 
+// student logout
+app.get('/adminlogout', adminauth, async (req, res) => {
+    try {
+        req.user.tokens = req.user.tokens.filter((elem) => {
+            return elem.token != req.token;
+        })
+        res.clearCookie('jwt');
+        console.log("logout successfully");
+        await req.user.save();
+        res.redirect("/")
+    }
+    catch (err) {
+        console.log(err);
+    }
+})
+
 // see student data
 app.post('/seeStudentData', (req, res) => {
     studentData.findOne({
@@ -249,8 +340,9 @@ app.post('/seeAllStudentData', paginationResult(studentData), (req, res) => {
 
 
 app.post('/addStudentDetails', (req, res) => {
-    console.log("myMark", req.body.data.marks)
-    const studentDataObj = new studentData({
+    const [maths, science, english, hindi, sst] = req.body.data.marks
+    console.log(req.body.data.marks)
+    studentData.create({
         rollNo: req.body.data.rollNo,
         name: req.body.data.name,
         email: req.body.data.email,
@@ -264,32 +356,191 @@ app.post('/addStudentDetails', (req, res) => {
         sclass: req.body.data.sclass,
         temail: req.body.data.temail,
         school: req.body.data.school,
-        marks:req.body.data.marks
-    })
+        marks: [
+            { title: 'maths', marks: maths.maths },
+            { title: 'science', marks: science.science },
+            { title: 'hindi', marks: hindi.hindi },
+            { title: 'english', marks: english.english },
+            { title: 'sst', marks: sst.sst },
 
-    studentDataObj.save().then(function (data) {
-        console.log(data)
+        ],
+    }).then(function (data) {
+        console.log(data);
         console.log("Data save");
-    }).catch(function (err) {
-        console.log(err);
     })
+        .catch(function (err) {
+            console.log(err);
+        });
+
     return res.redirect('/teacher-dashboard');
 })
 
 // add school details
 app.post('/addSchoolDetails', (req, res) => {
-    const schoolDataObj = new schoolData({
-        schoolname: req.body.myObj.school_name,
-        schoolemail: req.body.myObj.school_email,
-        area: req.body.myObj.area,
-        city: req.body.myObj.city,
+    var areaObj, regionObj;
+
+    areaRegister.findOne({ area: req.body.myObj.area }).then(function (data) {
+        // console.log("data".data)
+        if (data == undefined) {
+            areaObj = new areaRegister(
+                {
+                    _id: ObjectID(req.body.myObj.area.id),
+                    area: req.body.myObj.area,
+                    schoolname: [req.body.myObj.school_name]
+                })
+                areaObj.save().then(function (data) {
+                    console.log("Data save");
+                }).catch(function (err) {
+                    console.log(err);
+                })
+            
+        }
+        else {
+            console.log('data', data);
+            var newArr = data.schoolname.push(req.body.myObj.school_name);
+            console.log("newArr", data.schoolname)
+            areaRegister.updateOne({ area: req.body.myObj.area },
+                {
+                    $set: {
+                        schoolname: data.schoolname
+                    }
+                }).then(function (data) {
+
+                    console.log(data)
+                }).catch(function (err) {
+                    console.log(err)
+                })
+        }
+
+    }).catch(function (err) {
+        console.log(err)
     })
 
-    schoolDataObj.save().then(function (data) {
+
+console.log('myreg',req.body.myObj.region)
+    regionRegister.findOne({ regionname: req.body.myObj.region }).then(function (data) {
+        console.log('myregData',data)
+        if (data == null) {
+            //new
+            console.log('hhhiiii',areaObj);
+            regionObj = new regionRegister(
+                {
+                    _id: ObjectID(req.body.myObj.region.id),
+                    regionname: req.body.myObj.region,
+                    area: [areaObj._id]
+                }
+            )
+            console.log(regionObj)
+            regionObj.save().then(function (data) {
+                console.log("Data save for main work");
+            }).catch(function (err) {
+                console.log(err);
+            })
+
+        }
+        else {
+            // check area is present or not
+            var areaArr=[]
+            regionRegister.find({regionname:req.body.myObj.region}).then(function(data){
+                areaArr = data.area
+            }).catch(function(err)
+            {
+                console.log(err)
+            })
+            console.log(areaArr)
+            areaRegister.findOne(
+                {
+                    _id: {
+                        $in: areaArr
+                        
+                    }
+                }
+            ).then(function (data) {
+                if (data == undefined) {
+                    // non exist => add area id
+                    var newArr = data.area.push(areaObj._id);
+                    console.log("newArr", data.area)
+                    regionRegister.updateOne({ region: req.body.myObj.region },
+                        {
+                            $set: {
+                                area: data.area
+                            }
+                        }).then(function (data) {
+                            console.log(data)
+                        }).catch(function (err) {
+                            console.log(err)
+                        })
+                }
+                else {
+                    // exist
+                }
+            }).catch(function (err) {
+                console.log(err)
+            })
+
+
+        }
+    }).catch(function (err) {
+        console.log(err);
+    })
+
+
+    regionObj = new regionRegister(
+        {
+            _id: ObjectID(req.body.myObj.region.id),
+            regionname: req.body.myObj.region,
+            area: [areaObj._id]
+        }
+    )
+    regionObj.save().then(function (data) {
+        console.log("Data save for testing");
+    }).catch(function (err) {
+        console.log(err);
+    })
+    const cityObj = new cityRegister(
+        {
+            cityname: req.body.myObj.city,
+            region: [regionObj._id]
+        }
+    )
+
+
+    cityObj.save().then(function (data) {
         console.log("Data save");
     }).catch(function (err) {
         console.log(err);
     })
+
+
+
+
+
+
+    // const schoolDataObj = new schoolData(
+    //     {
+    //      cityObj: [{
+    //         cityname:req.body.myObj.city,
+    //         region:[req.body.myObj.region]
+    //      }
+    //      ] ,
+    //      regionObj: [{
+    //         regionname:req.body.myObj.region,
+    //         area:[req.body.myObj.area]
+    //      }
+    //      ] 
+    //      ,schoolemail:req.body.myObj.school_email
+    //     // schoolname: req.body.myObj.school_name,
+    //     // schoolemail: req.body.myObj.school_email,
+    //     // city: req.body.myObj.city,
+    //     // region: req.body.myObj.region,
+    //     // area: req.body.myObj.area,
+    // })
+
+    // schoolDataObj.save().then(function (data) {
+    //     console.log("Data save");
+    // }).catch(function (err) {
+    //     console.log(err);
+    // })
     return res.redirect('/teacher-dashboard');
 })
 
@@ -306,44 +557,45 @@ app.post('/deleteStudent', (req, res) => {
 })
 
 // get school name
-app.get('/schoolName', (req, res) => {
-    schoolData.find().then(function (data) {
-        return res.json(data)
-    }).catch(function (err) {
-        console.log(err)
-    })
-})
+// app.get('/schoolName', (req, res) => {
+//     schoolData.find().then(function (data) {
+//         return res.json(data)
+//     }).catch(function (err) {
+//         console.log(err)
+//     })
+// })
 
 // get area name
-app.get('/areaName', (req, res) => {
-    schoolData.find().then(function (data) {
-        return res.json(data)
-    }).catch(function (err) {
-        console.log(err)
-    })
-})
+// app.get('/areaName', (req, res) => {
+//     schoolData.find().then(function (data) {
+//         return res.json(data)
+//     }).catch(function (err) {
+//         console.log(err)
+//     })
+// })
 
+// fetch all students that are of that school
 app.post('/indiviualSchoolStudent', (req, res) => {
-
     var schoolName = req.body.data.school;
     var limit = req.body.data.limit;
 
     var schoolPip = [
         { $match: { school: schoolName } },
         { $unwind: "$marks" },
-        // {
-        //     '$group': {
-        //         _id: { rollNo: "$rollNo", name: "$name", school: "$school", email: "$email" },
-        //         'total': { '$sum': '$marks.v' }
-        //     }
-        // },
-        //  {
-        //      $project: {
-        //          'percent': { $round: [{ $multiply: [{ $divide: ["$total", 500] }, 100] }, 1] },
-        //          'totalMarks': '$total'
-        //      }
-        //  },
-        //  { $sort: { totalMarks: -1 } }
+
+        {
+            '$group': {
+                _id: { rollNo: "$rollNo", name: "$name", school: "$school", email: "$email" },
+                'total': { '$sum': '$marks.marks' }
+            }
+        },
+        {
+            $project: {
+                'percent': { $round: [{ $multiply: [{ $divide: ["$total", 500] }, 100] }, 1] },
+                'totalMarks': '$total'
+            }
+        },
+        { $sort: { totalMarks: -1 } }
     ]
     if (limit == 3) {
         schoolPip.push(
@@ -361,49 +613,6 @@ app.post('/indiviualSchoolStudent', (req, res) => {
     })
 })
 
-// fetch all students that are of that school
-// app.post('/indiviualSchoolStudent', (req, res) => {
-
-//     var schoolName = req.body.data.school;
-//     var limit = req.body.data.limit;
-
-//     var schoolPip = [
-//         { $match: { school: schoolName } },
-//         {
-//             '$addFields': {
-//                 'marks': { $objectToArray: '$marks' }
-//             }
-//         },
-//         { $unwind: "$marks" },
-//         {
-//             '$group': {
-//                 _id: { rollNo: "$rollNo", name: "$name", school: "$school", email: "$email" },
-//                 'total': { '$sum': '$marks.v' }
-//             }
-//         },
-//         {
-//             $project: {
-//                 'percent': { $round: [{ $multiply: [{ $divide: ["$total", 500] }, 100] }, 1] },
-//                 'totalMarks': '$total'
-//             }
-//         },
-//         { $sort: { totalMarks: -1 } }
-//     ]
-//     if (limit == 3) {
-//         schoolPip.push(
-//             { $limit: limit }
-//         )
-//     }
-//     else {
-//         schoolPip = schoolPip
-//     }
-//     studentData.aggregate(schoolPip).then(function (data) {
-//         return res.json(data)
-//     }).catch(function (err) {
-//         console.log(err)
-//     })
-// })
-
 // fetch all students on the basic of percentage 
 app.post('/criteria', (req, res) => {
     var schoolName = req.body.data.school;
@@ -414,14 +623,13 @@ app.post('/criteria', (req, res) => {
         {
             '$group': {
                 _id: { rollNo: "$rollNo", name: "$name", school: "$school", email: "$email" },
-                'total': { '$sum': '$marks.v' }
+                'total': { '$sum': '$marks.marks' }
             }
         },
         {
             $project: {
                 'percent': { $round: [{ $multiply: [{ $divide: ["$total", 500] }, 100] }, 1] },
                 'totalMarks': '$total'
-
             }
         },
         { $match: { percent: { $gt: criteria } } },
@@ -438,53 +646,56 @@ app.post('/criteria', (req, res) => {
 })
 
 // fetch top 3 students of that area 
-app.post('/topAreaStudent', (req, res) => {
-    var areaName = req.body.data.area;
-    schoolData.aggregate(
-        [
-            { $match: { area: areaName } }
-        ]
-    ).then(function (data) {
-        var schoolList = []
-        for (let i = 0; i < data.length; i++) {
-            schoolList.push(data[i].schoolname);
-        }
+// app.post('/topAreaStudent', (req, res) => {
+//     var areaName = req.body.data.area;
+//     schoolData.aggregate(
+//         [
+//             { $match: { area: areaName } }
+//         ]
+//     ).then(function (data) {
+//         var schoolList = []
+//         for (let i = 0; i < data.length; i++) {
+//             schoolList.push(data[i].schoolname);
+//         }
 
-        var schoolAreaPip = [
-            {
-                $match: {
-                    school: {
-                        $in: schoolList
-                    }
-                }
-            },
+//         var schoolAreaPip = [
+//             {
+//                 $match: {
+//                     school: {
+//                         $in: schoolList
+//                     }
+//                 }
+//             },
 
-            { $unwind: "$marks" },
-            {
-                '$group': {
-                    _id: { rollNo: "$rollNo", name: "$name", school: "$school", email: "$email" },
-                    'total': { '$sum': '$marks.v' }
-                }
-            },
-            {
-                $project: {
-                    'percent': { $round: [{ $multiply: [{ $divide: ["$total", 500] }, 100] }, 1] },
-                    'totalMarks': '$total'
-                }
-            },
-            { $sort: { totalMarks: -1 } },
-            { $limit: 3 }
-        ]
-        studentData.aggregate(schoolAreaPip).then(function (data) {
-            return res.json(data)
-        }).catch(function (err) {
-            console.log(err)
-        })
-    }).catch(function (err) {
-        console.log(err)
-    })
+//             { $unwind: "$marks" },
+//             {
+//                 '$group': {
+//                     _id: { rollNo: "$rollNo", name: "$name", school: "$school", email: "$email" },
+//                     'total': { '$sum': '$marks.marks' }
+//                 }
+//             },
+//             {
+//                 $project: {
+//                     'percent': { $round: [{ $multiply: [{ $divide: ["$total", 500] }, 100] }, 1] },
+//                     'totalMarks': '$total'
+//                 }
+//             },
+//             { $sort: { totalMarks: -1 } },
+//             { $limit: 3 }
+//         ]
+//         studentData.aggregate(schoolAreaPip).then(function (data) {
+//             return res.json(data)
+//         }).catch(function (err) {
+//             console.log(err)
+//         })
+//     }).catch(function (err) {
+//         console.log(err)
+//     })
 
-})
+// })
+
+
+
 
 // top 3 student of db
 app.get('/topStudent', (req, res) => {
@@ -495,7 +706,7 @@ app.get('/topStudent', (req, res) => {
         {
             '$group': {
                 _id: { rollNo: "$rollNo", name: "$name", school: "$school", email: "$email" },
-                'total': { '$sum': '$marks.v' }
+                'total': { '$sum': '$marks.marks' }
             }
         },
         {

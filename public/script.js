@@ -93,6 +93,19 @@ app.config(function ($routeProvider) {
             },
             templateUrl: "teacherDashboard.html"
         })
+        .when("/auth_dasboard", {
+            resolve: {
+                function($location) {
+                    if (document.cookie === '') {
+                        $location.path('/')
+                    }
+                }
+            },
+            templateUrl: "auth_dashboard.html"
+        })
+        .when("/admin-login", {
+            templateUrl: "admin_login.html"
+        })
         .when("/student-details", {
             resolve: {
                 function($location) {
@@ -113,6 +126,16 @@ app.config(function ($routeProvider) {
                 }
             },
             templateUrl: "viewStudentDetails.html"
+        })
+        .when("/addNewAdmin", {
+            // resolve: {
+            //     function($location) {
+            //         if (document.cookie === '') {
+            //             $location.path('/')
+            //         }
+            //     }
+            // },
+            templateUrl: "addNewAdmin.html"
         })
         .otherwise({ redirectTo: '/' });
 })
@@ -398,29 +421,29 @@ app.controller('mainCtrl', function ($scope, $http, $rootScope, $location) {
     // get all school name present (Db) in array
     $rootScope.SchoolNameArrFn = function () {
         $scope.SchoolNameList = [];
-        $http.get("http://localhost:8000/schoolName").then(function (response) {
-            // console.log("respone",response.data.schoolname)
-            for (let i = 0; i < response.data.length; i++) {
-                $scope.SchoolNameList.push(response.data[i].schoolname)
-            }
-        }).catch(function (error) {
-            console.log(error);
-        })
+        // $http.get("http://localhost:8000/schoolName").then(function (response) {
+        //     // console.log("respone",response.data.schoolname)
+        //     for (let i = 0; i < response.data.length; i++) {
+        //         $scope.SchoolNameList.push(response.data[i].schoolname)
+        //     }
+        // }).catch(function (error) {
+        //     console.log(error);
+        // })
     }
 
     // get all area name present (Db) in array
     $rootScope.areaNameArrFn = function () {
         $scope.areaNameList = [];
-        $http.get("http://localhost:8000/areaName").then(function (response) {
-            for (let i = 0; i < response.data.length; i++) {
-                $scope.areaNameList.push(response.data[i].area)
-            }
+        // $http.get("http://localhost:8000/areaName").then(function (response) {
+        //     for (let i = 0; i < response.data.length; i++) {
+        //         $scope.areaNameList.push(response.data[i].area)
+        //     }
 
-            $scope.removeDuplicate($scope.areaNameList)
+        //     $scope.removeDuplicate($scope.areaNameList)
 
-        }).catch(function (error) {
-            console.log(error);
-        })
+        // }).catch(function (error) {
+        //     console.log(error);
+        // })
     }
 
     // function that remove duplicate from array
@@ -471,13 +494,13 @@ app.controller('mainCtrl', function ($scope, $http, $rootScope, $location) {
         var data = {
             area: AreaName
         }
-        $http.post("http://localhost:8000/topAreaStudent", { data }).then(function (res) {
+        // $http.post("http://localhost:8000/topAreaStudent", { data }).then(function (res) {
 
-            $rootScope.indivualschoolStudentArr = res.data
+        //     $rootScope.indivualschoolStudentArr = res.data
 
-        }).catch(function (err) {
-            console.log(err)
-        })
+        // }).catch(function (err) {
+        //     console.log(err)
+        // })
 
     }
 
@@ -499,49 +522,35 @@ app.controller('mainCtrl', function ($scope, $http, $rootScope, $location) {
     $scope.cancaeldetailsFn = function () {
         $location.path('/teacher-dashboard')
     }
-});
 
-
-// create the controller 
-app.controller('mainController', function ($scope, $http, $routeParams, $uibModal) {
-    $scope.showPopup = function () {
-        user = { 'school_name': '', 'school_email': '', 'area': '', 'city': '' };
-        $scope.modalInstance = $uibModal.open({
-            ariaLabelledBy: 'modal-title',
-            ariaDescribedBy: 'modal-body',
-            templateUrl: 'view.html',
-            controller: 'ModelHandlerController',
-            controllerAs: '$ctrl',
-            size: 'lg',
-            resolve: {
-                user: function () {
-                    return user;
-                }
-            }
-        });
-    }
-});
-
-// Model controller
-app.controller("ModelHandlerController", function ($scope, $uibModalInstance, $http, $rootScope) {
-    $scope.school_name = user.school_name;
-    $scope.school_email = user.school_email;
-    $scope.area = user.area;
-    $scope.city = user.city;
-
-    $scope.cancelModal = function () {
-        console.log("cancelmodal");
-        $uibModalInstance.dismiss('close');
+    $scope.getAdminData=function(name,email,password){
+        console.log(name,email,password)
+        var data = {
+            name:name,
+            email:email,
+            password:password
+        }
+        $http.post('http://localhost:8000/adminAuth',{data}).then(function(data)
+        {
+            console.log(data)
+            $location.path('/auth_dasboard')
+        }).catch(function(err)
+        {
+            console.log(err)
+        })
     }
 
-    $scope.ok = function () {
-        $uibModalInstance.close('save');
 
+    
+    $scope.ok = function (school_name,school_email,city,region,area) {
+        
         var myObj = {
-            school_name: $scope.school_name,
-            school_email: $scope.school_email,
-            area: $scope.area,
-            city: $scope.city
+            school_name: school_name,
+            school_email: school_email,
+            city: city,
+            region: region,
+            area: area
+            
         }
 
         $http.post("http://localhost:8000/addSchoolDetails", {
@@ -550,11 +559,97 @@ app.controller("ModelHandlerController", function ($scope, $uibModalInstance, $h
         }).then(function (response) {
 
             $rootScope.SchoolNameArrFn();
+            
+            
+            $location.path('/auth_dasboard')
+            console.log('in')
         }).catch(function (error) {
             console.log("Myerr", error);
         })
     }
+
+    $scope.addNewAdmin=function(){
+        $location.path("/addNewAdmin")
+    }
+
+    $scope.addAdminFn=function(newAdminName,newAdminEmail,newAdminPassword){
+        
+           
+                var data = {
+                    "name": newAdminName,
+                    "email": newAdminEmail,
+                    "password": newAdminPassword
+                }
+                $http.post("http://localhost:8000/addNewAdmin", {
+                    data
+                }).then(function (response) {
+                    if (response.status == 200) {
+                        $location.path('/auth_dasboard');
+                    }
+                }).catch(function (error) {
+                    console.log(error);
+                })
+    }
 });
+
+
+// create the controller 
+// app.controller('mainController', function ($scope, $http, $routeParams, $uibModal) {
+//     $scope.showPopup = function () {
+//         user = { 'school_name': '', 'school_email': '','city': '', 'region':'',  'area': '' };
+//         $scope.modalInstance = $uibModal.open({
+//             ariaLabelledBy: 'modal-title',
+//             ariaDescribedBy: 'modal-body',
+//             templateUrl: 'view.html',
+//             controller: 'ModelHandlerController',
+//             controllerAs: '$ctrl',
+//             size: 'lg',
+//             resolve: {
+//                 user: function () {
+//                     return user;
+//                 }
+//             }
+//         });
+//     }
+// });
+
+// Model controller
+// app.controller("ModelHandlerController", function ($scope, $uibModalInstance, $http, $rootScope) {
+//     $scope.school_name = user.school_name;
+//     $scope.school_email = user.school_email;
+//     $scope.city = user.city;
+//     $scope.region = user.region;
+//     $scope.area = user.area;
+    
+
+//     $scope.cancelModal = function () {
+//         console.log("cancelmodal");
+//         $uibModalInstance.dismiss('close');
+//     }
+
+//     $scope.ok = function () {
+//         $uibModalInstance.close('save');
+
+//         var myObj = {
+//             school_name: $scope.school_name,
+//             school_email: $scope.school_email,
+//             city: $scope.city,
+//             region: $scope.region,
+//             area: $scope.area
+            
+//         }
+
+//         $http.post("http://localhost:8000/addSchoolDetails", {
+
+//             myObj
+//         }).then(function (response) {
+
+//             $rootScope.SchoolNameArrFn();
+//         }).catch(function (error) {
+//             console.log("Myerr", error);
+//         })
+//     }
+// });
 
 
 

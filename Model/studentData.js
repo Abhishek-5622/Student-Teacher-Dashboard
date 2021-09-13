@@ -7,6 +7,11 @@ const jwt = require('jsonwebtoken')
 require("dotenv").config();
 const validator = require('validator');
 
+const subjectSchema = new mongoose.Schema({
+    title : String,
+    marks : Number
+});
+
 // create schema
 const studentDataSchema = new mongoose.Schema(
     {
@@ -73,39 +78,7 @@ const studentDataSchema = new mongoose.Schema(
             type: String,
             require: true
         },
-        marks:
-            [
-                {
-                    maths: {
-                        type: Number,
-                        require: true
-                    }
-                },
-                {
-                    science: {
-                        type: Number,
-                        require: true
-                    }
-                },
-                {
-                    english: {
-                        type: Number,
-                        require: true
-                    }
-                },
-                {
-                    hindi: {
-                        type: Number,
-                        require: true
-                    }
-                },
-                {
-                    sst: {
-                        type: Number,
-                        require: true
-                    }
-                }
-            ]
+        marks: [subjectSchema],
     }
 )
 

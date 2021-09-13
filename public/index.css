@@ -302,3 +302,14 @@ margin-bottom: 1.5rem;
     display: flex;
     justify-content: space-around
 }
+
+.admin_div{
+    background-color: black;
+}
+.mod{
+    color: white;
+}
+.myBtn{
+    width: 10rem;
+    margin-right: 50rem;
+}

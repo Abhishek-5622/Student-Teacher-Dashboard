@@ -58,9 +58,9 @@
       <th scope="col">Marks</th>
     </tr>
     <tr mdbTableCol ng-repeat="(key, value) in marks">
-      <td text-align='center'> {{key}} </td>
-      <td text-align='center'>100</td>
-      <td text-align='center'> {{ value }} </td>
+      <td text-align='center'> {{value.title}} </td>
+        <td text-align='center'>100</td>
+        <td text-align='center'> {{ value.marks }} </td>
     </tr>
   </table>
   <br>
