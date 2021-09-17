@@ -11,7 +11,8 @@ const TeacherSchema = new mongoose.Schema(
     {
         name: {
             type: String,
-            require: true
+            require: true,
+            trim:true
         },
         email: {
             type: String,
@@ -25,7 +26,8 @@ const TeacherSchema = new mongoose.Schema(
         },
         password: {
             type: String,
-            require: true
+            require: true,
+            trim:true
         },
         tokens: [
             {

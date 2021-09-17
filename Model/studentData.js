@@ -1,5 +1,4 @@
-// For student Data
-
+// For student Data add
 
 // require
 const mongoose = require('mongoose');
@@ -9,7 +8,11 @@ const validator = require('validator');
 
 const subjectSchema = new mongoose.Schema({
     title : String,
-    marks : Number
+    marks : {
+        type:Number,
+        min:0,
+        max:100
+    }
 });
 
 // create schema
@@ -17,11 +20,13 @@ const studentDataSchema = new mongoose.Schema(
     {
         rollNo: {
             type: Number,
-            require: true
+            require: true,
+            unique:true
         },
         name: {
             type: String,
-            require: true
+            require: true,
+            trim:true
         },
         email: {
             type: String,
@@ -43,27 +48,33 @@ const studentDataSchema = new mongoose.Schema(
         },
         city: {
             type: String,
-            require: true
+            require: true,
+            trim:true
         },
         area: {
             type: String,
-            require: true
+            require: true,
+            trim:true
         },
         motherName: {
             type: String,
-            require: true
+            require: true,
+            trim:true
         },
         fatherName: {
             type: String,
-            require: true
+            require: true,
+            trim:true
         },
         classCoordinator: {
             type: String,
-            require: true
+            require: true,
+            trim:true
         },
         sclass: {
             type: String,
-            require: true
+            require: true,
+            trim:true
         },
         temail: {
             type: String,

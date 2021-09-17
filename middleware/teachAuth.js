@@ -1,22 +1,22 @@
 const jwt = require('jsonwebtoken');
 const TeacherRegister = require('../Model/teacherRegister');
 
-const Techauth = async (req, res, next) => {
-    try {
-        const token = req.cookies.jwt;
-        const verifyUser = jwt.verify(token, process.env.SECRETE_KEY2)
-        const user = await TeacherRegister.findOne({ _id: verifyUser._id })
+
+
+const Techauth = (req, res, next) => {
+    var token = req.cookies.jwt;
+    var verifyUser = jwt.verify(token, process.env.SECRETE_KEY2)
+    var user = TeacherRegister.findOne({ _id: verifyUser._id }).then(function (data) {
         req.token = token;
         req.user = user;
         next();
-    }
-    catch (error) {
+    }).catch(function (err) {
         if (res.this != undefined) {
-            res.this.status(401).send(error);
+            res.this.status(401).send(err);
         }
         else {
             res.send("<h1>You can't see this page without login. So Please login first</h1>")
         }
-    }
+    })
 }
 module.exports = Techauth;

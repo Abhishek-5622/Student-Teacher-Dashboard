@@ -12,7 +12,8 @@ const userSchema = new mongoose.Schema(
     {
         name: {
             type: String,
-            require: true
+            require: true,
+            trim:true
         },
         email: {
             type: String,
@@ -28,14 +29,14 @@ const userSchema = new mongoose.Schema(
             type: String,
             require: true
         },
-        tokens: [
-            {
-                token: {
-                    type: String,
-                    require: true
-                }
-            }
-        ]
+        // tokens: [
+        //     {
+        //         token: {
+        //             type: String,
+        //             require: true
+        //         }
+        //     }
+        // ]
     }
 )
 
@@ -44,7 +45,7 @@ userSchema.methods.generateAuthToken = function () {
     // it take 2 parameter : payload => id and secrete key of 32 character
     const token = jwt.sign({ _id: this._id.toString() }, process.env.SECRETE_KEY1);
     // add in our database
-    this.tokens = this.tokens.concat({ token: token })
+    // this.tokens = this.tokens.concat({ token: token })
     // save in db
     this.save().then(function () {
         console.log("token save")

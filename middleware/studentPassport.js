@@ -16,16 +16,16 @@ var cookieExtractor = (function (req) {
 opts.jwtFromRequest = cookieExtractor;
 
 module.exports = function (passport) {
+    
     passport.use(new JwtStrategy(opts, function (jwtPayload, done) {
 
         // console.log("jwtPayload " + JSON.stringify(jwtPayload._id))
 
         UserRegister.findOne({ _id: jwtPayload._id }).then(function (data) {
-
-
             return done(null, data);
         }).catch(function (err) {
             console.log(err)
+            
             return done(err, false);
         })
 

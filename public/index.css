@@ -14,11 +14,13 @@ body{
 }
 
 .heading{
+   
     height: 13vh;
 }
 
 .main_div{
     background-color: black;
+    
 }
 
 #welcome_div{
@@ -38,7 +40,7 @@ body{
     height: 26vh;
     width: 14vw;
     opacity: 0.7;
-    border:5px solid blue;
+    border: 5px solid cyan;;
 }
 
 .teacher_phto:hover,.student_phto:hover{
@@ -56,9 +58,10 @@ body{
 /* *************login**************** */
 .student_main_container{
     display: flex;
-    background-color: aquamarine;;;
-    height: 83vh;
+    background-color: currentcolor;
+    height: 75vh;
     border-radius: 20px 20px;
+    /* margin-top: 7rem; */
 }
 
 .student_login{
@@ -75,11 +78,10 @@ body{
 }
 
 .mylogin{
-    width:70%;
+    width:60%;
     margin-left: 18%;
-    margin-top: 1.7rem;
-    height: 55%;
-    margin-top: 15rem;
+    height: 63%;
+    margin-top: 10rem;
 }
 
 .login_heading{
@@ -116,7 +118,7 @@ color: blue;
     width: 40%;
     margin-bottom: 1rem;
     padding-left: 1rem;
-    margin-left: 23rem;
+    margin-left: 18rem;
     font-size: 1.3rem;
     background-color: rgb(31, 30, 30);
     color: white;
@@ -313,3 +315,34 @@ margin-bottom: 1.5rem;
     width: 10rem;
     margin-right: 50rem;
 }
+.fwidth{
+    width:70%;
+}
+.myform{
+    
+    margin-left: 3rem;
+    margin-right: 3rem;
+}
+.heading2{
+    height: 6rem;
+    font-size: 3rem;
+    padding-top: 1.4rem;
+}
+.ana_div{
+    display: flex; 
+     justify-content: space-evenly; 
+     align-items: center;
+
+}
+.areaSchoolSelect{
+    height: 3.2rem;
+    width: 18rem;
+    /* margin-bottom: 2.5rem; */
+}
+.areaSchoolSelectBtn{
+    margin-bottom: 7rem;
+}
+#field2{
+margin-top: 2rem;
+}
+

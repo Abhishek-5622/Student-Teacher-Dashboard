@@ -3,12 +3,12 @@
 <div class="panel panel-default ">
     <div class="panel-heading"> <b>STUDENT PANEL</b> </div>
     <br>
-   
+ 
     <form>
         <div class="mb-5 ">
             <label for="exampleFormControlInput66" class="form-label ">School Name : </label>
             <select class='schoolSelect' ng-model="fetchSchool"  ng-change="FetchAnalyticDetails(fetchSchool,1)">
-              <option ng-repeat="x in SchoolNameList" value="{{x}}">{{x}}</option>
+              <option ng-repeat="x in SchoolNameList track by $index" value="{{x}}">{{x}}</option>
               </select>
           </div><br>
         
@@ -24,6 +24,7 @@
           <button type="button" class="btn btn-success" ng-model="singleModel" ng-click='FetchTop3StudentDetails()'>
             Top 3 (India)
           </button>
+        
 <div class="area_Box">
 
 <select class='areaSelect' ng-model="areaName" >

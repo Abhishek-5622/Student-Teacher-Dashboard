@@ -25,7 +25,7 @@ const adminauth = async (req, res, next) => {
             res.this.status(401).send(error);
         }
         else {
-            res.send("<h1>You can't see this page without login. So Please login first</h1>")
+            res.status(402).send("<h1>You can't see this page without login. So Please login first</h1>")
         }
     }
 }

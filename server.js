@@ -9,7 +9,7 @@ var bodyParser = require("body-parser")
 const path = require('path');
 const cookieParser = require('cookie-parser')
 const hbs = require('hbs')
-const auth = require('./middleware/auth')
+// const auth = require('./middleware/auth')
 const Techauth = require('./middleware/teachAuth')
 const adminauth = require('./middleware/adminAuth')
 const UserRegister = require('./Model/register');
@@ -17,13 +17,15 @@ const TeacherRegister = require('./Model/teacherRegister')
 const studentData = require('./Model/studentData')
 const adminRegister = require('./Model/adminRegister')
 const schoolData = require('./Model/schoolRegister')
-const { cityRegister, regionRegister, areaRegister } = require('./Model/schoolRegister')
 var JSAlert = require("js-alert");
 const querystring = require('querystring');
 var passport = require('passport');
 const { response } = require('express');
 require('./middleware/studentPassport')(passport)
-// require('./middleware/teacherPassport')(passport)
+
+// var LocalStrategy = require('passport-local').Strategy;
+// require('./middleware/passportLocal')(passport)
+
 
 // get port
 const port = process.env.PORT || 8000;
@@ -38,32 +40,44 @@ app.use(express.static("public"));
 app.use(cookieParser())
 app.use(passport.initialize())
 
+
+const userAuth = passport.authenticate('jwt', { session: false })
+
+
+// const userAuth = passport.authenticate('local')
+
 // routing
 app.get('/', (req, res) => {
     res.sendFile('index.html')
 })
 
 // student signup
-app.post('/add', async (req, res) => {
+app.post('/add', (req, res) => {
     const userReg = new UserRegister({
         name: req.body.data.name,
         email: req.body.data.email,
         password: req.body.data.password
     })
-    try {
-        // generate token
-        const token = await userReg.generateAuthToken()
-
-        // set cookies
-        res.cookie('jwt', token, {
-            expires: new Date(Date.now() + 10000000),
-
-        })
-        res.redirect('/student-dashboard');
-    }
-    catch (err) {
+    userReg.save().then(function (data) {
+        console.log("data Save")
+    }).catch(function (err) {
         console.log(err)
-    }
+    })
+    // try {
+    //     // generate token
+    //     const token = await userReg.generateAuthToken()
+
+    //     // set cookies
+    //     res.cookie('jwt', token, {
+    //         expires: new Date(Date.now() + 10000000),
+
+    //     })
+    res.send('hi');
+    // }
+    // catch (err) {
+
+    //     console.log(err)
+    // }
 })
 
 // admin signup
@@ -73,20 +87,12 @@ app.post('/addNewAdmin', async (req, res) => {
         email: req.body.data.email,
         password: req.body.data.password
     })
-    try {
-        // generate token
-        const token = await adminReg.generateAuthToken()
-
-        // set cookies
-        res.cookie('jwt', token, {
-            expires: new Date(Date.now() + 10000000),
-
-        })
-        res.redirect('/auth-dashboard');
-    }
-    catch (err) {
+    adminReg.save().then(function (data) {
+        console.log("admin save")
+    }).catch(function (err) {
         console.log(err)
-    }
+    })
+    res.send('hi');
 })
 
 
@@ -125,16 +131,12 @@ app.post('/adminAuth', async (req, res) => {
     catch (err) {
         console.log(err);
     }
-
-
-
-
 })
 
 
-app.get('/auth-dashboard',
-    function (req, res) {
-        return res.send('Hi')
+app.get('/auth-dashboard', adminauth,
+    (req, res) => {
+        return res.send('auth_dashboard.html')
     })
 
 // login
@@ -164,7 +166,7 @@ app.post('/getuser', async (req, res) => {
                 res.redirect('/student-dashboard?email=' + email);
             }
             else {
-                alert('Enter valid details')
+                alert('Enter valid details ')
             }
         }
         else {
@@ -176,17 +178,10 @@ app.post('/getuser', async (req, res) => {
     }
 })
 
-// add middleware for authenication
-// app.get('/student-dashboard', auth, (req, res) => {
-//     console.log(req.query.email)
-//     // res.sendFile(path.join(__dirname, '/public/studentDashboard.html'));
-//     return res.json({'email':req.query.email})
-//     // res.render("studentDashboard",{email:req.query.email})
-// })
-
 // add passportjs middleware for authenication
-app.get('/student-dashboard', passport.authenticate('jwt', { session: false }),
+app.get('/student-dashboard', userAuth,
     function (req, res) {
+        
         return res.json({ 'email': req.query.email })
     })
 
@@ -223,93 +218,43 @@ app.post('/getTeacher', async (req, res) => {
 })
 
 // teacher signup
-app.post('/addTeacher', async (req, res) => {
+app.post('/addTeacher', (req, res) => {
     const TeachReg = new TeacherRegister({
         name: req.body.data.name,
         email: req.body.data.email,
         password: req.body.data.password
     })
-    try {
-        const token = await TeachReg.generateAuthToken()
-
-        res.cookie('jwt', token, {
-            expires: new Date(Date.now() + 100000000),
-
-        })
-
-        res.redirect('/teacher-dashboard');
-    }
-    catch (err) {
-        console.log(err)
-    }
-
-
-    // TeachReg.save().then(function(data){
-    //     console.log("Add Data");   
-    // }).catch(function(err)
-    // {
-    //     console.log(err);
-    // })
+    TeachReg.save().then(function (data) {
+        console.log("Add Data");
+    }).catch(function (err) {
+        console.log(err);
+    })
+    res.redirect('/');
 })
-
-// app.get('/teacher-dashboard', Techauth, (req, res) => {
-//     console.log(req.query.email)
-//     // res.sendFile(path.join(__dirname, '/public/teacherDashboard.html'));
-//     return res.json({'email':req.query.email})
-//     // res.render("studentDashboard",{email:req.query.email})
-// })
 
 // auth for teacher dashboard
 app.get('/teacher-dashboard', Techauth, function (req, res) {
     return res.json({ 'email': req.query.email })
 })
 
+
+
 // student logout
-app.get('/logout', auth, async (req, res) => {
-    try {
-        req.user.tokens = req.user.tokens.filter((elem) => {
-            return elem.token != req.token;
-        })
-        res.clearCookie('jwt');
-        console.log("logout successfully");
-        await req.user.save();
-        res.redirect("/")
-    }
-    catch (err) {
-        console.log(err);
-    }
+app.get('/logout', (req, res) => {
+    res.cookie("jwt", "", { maxAge: 1 });
+    res.redirect("/");
 })
 
 // teacher logout
-app.get('/Teachlogout', Techauth, async (req, res) => {
-    try {
-        req.user.tokens = req.user.tokens.filter((elem) => {
-            return elem.token != req.token;
-        })
-        res.clearCookie('jwt');
-        console.log("logout successfully");
-        await req.user.save();
-        res.redirect("/")
-    }
-    catch (err) {
-        console.log(err);
-    }
+app.get('/Teachlogout', (req, res) => {
+    res.cookie("jwt", "", { maxAge: 1 });
+    res.redirect("/");
 })
 
 // student logout
-app.get('/adminlogout', adminauth, async (req, res) => {
-    try {
-        req.user.tokens = req.user.tokens.filter((elem) => {
-            return elem.token != req.token;
-        })
-        res.clearCookie('jwt');
-        console.log("logout successfully");
-        await req.user.save();
-        res.redirect("/")
-    }
-    catch (err) {
-        console.log(err);
-    }
+app.get('/adminlogout', (req, res) => {
+    res.cookie("jwt", "", { maxAge: 1 });
+    res.redirect("/");
 })
 
 // see student data
@@ -323,15 +268,7 @@ app.post('/seeStudentData', (req, res) => {
     })
 })
 
-// app.post('/seeAllStudentData', (req, res) => {
-//     // console.log("myt",req.body.data.email);
-//     studentData.find({ temail: req.body.data.email }).then(function (data) {
-//         // console.log("Start",data)
-//         return res.json(data)
-//     }).catch(function (err) {
-//         console.log(err)
-//     })
-// })
+
 
 // see all student details with pagination
 app.post('/seeAllStudentData', paginationResult(studentData), (req, res) => {
@@ -339,8 +276,8 @@ app.post('/seeAllStudentData', paginationResult(studentData), (req, res) => {
 })
 
 
-app.post('/addStudentDetails', (req, res) => {
-    const [maths, science, english, hindi, sst] = req.body.data.marks
+app.post('/addStudentDetails', Techauth, (req, res) => {
+    const [maths, science, english, hindi, sst] = req.body.data.marks;
     console.log(req.body.data.marks)
     studentData.create({
         rollNo: req.body.data.rollNo,
@@ -377,175 +314,30 @@ app.post('/addStudentDetails', (req, res) => {
 
 // add school details
 app.post('/addSchoolDetails', (req, res) => {
-    var areaObj, regionObj;
-
-    areaRegister.findOne({ area: req.body.myObj.area }).then(function (data) {
-        // console.log("data".data)
-        if (data == undefined) {
-            areaObj = new areaRegister(
-                {
-                    _id: ObjectID(req.body.myObj.area.id),
-                    area: req.body.myObj.area,
-                    schoolname: [req.body.myObj.school_name]
-                })
-                areaObj.save().then(function (data) {
-                    console.log("Data save");
-                }).catch(function (err) {
-                    console.log(err);
-                })
-            
-        }
-        else {
-            console.log('data', data);
-            var newArr = data.schoolname.push(req.body.myObj.school_name);
-            console.log("newArr", data.schoolname)
-            areaRegister.updateOne({ area: req.body.myObj.area },
-                {
-                    $set: {
-                        schoolname: data.schoolname
-                    }
-                }).then(function (data) {
-
-                    console.log(data)
-                }).catch(function (err) {
-                    console.log(err)
-                })
-        }
-
-    }).catch(function (err) {
-        console.log(err)
-    })
-
-
-console.log('myreg',req.body.myObj.region)
-    regionRegister.findOne({ regionname: req.body.myObj.region }).then(function (data) {
-        console.log('myregData',data)
-        if (data == null) {
-            //new
-            console.log('hhhiiii',areaObj);
-            regionObj = new regionRegister(
-                {
-                    _id: ObjectID(req.body.myObj.region.id),
-                    regionname: req.body.myObj.region,
-                    area: [areaObj._id]
-                }
-            )
-            console.log(regionObj)
-            regionObj.save().then(function (data) {
-                console.log("Data save for main work");
-            }).catch(function (err) {
-                console.log(err);
-            })
-
-        }
-        else {
-            // check area is present or not
-            var areaArr=[]
-            regionRegister.find({regionname:req.body.myObj.region}).then(function(data){
-                areaArr = data.area
-            }).catch(function(err)
-            {
-                console.log(err)
-            })
-            console.log(areaArr)
-            areaRegister.findOne(
-                {
-                    _id: {
-                        $in: areaArr
-                        
-                    }
-                }
-            ).then(function (data) {
-                if (data == undefined) {
-                    // non exist => add area id
-                    var newArr = data.area.push(areaObj._id);
-                    console.log("newArr", data.area)
-                    regionRegister.updateOne({ region: req.body.myObj.region },
-                        {
-                            $set: {
-                                area: data.area
-                            }
-                        }).then(function (data) {
-                            console.log(data)
-                        }).catch(function (err) {
-                            console.log(err)
-                        })
-                }
-                else {
-                    // exist
-                }
-            }).catch(function (err) {
-                console.log(err)
-            })
-
-
-        }
-    }).catch(function (err) {
-        console.log(err);
-    })
-
-
-    regionObj = new regionRegister(
+    const schoolDataObj = new schoolData(
         {
-            _id: ObjectID(req.body.myObj.region.id),
-            regionname: req.body.myObj.region,
-            area: [areaObj._id]
-        }
-    )
-    regionObj.save().then(function (data) {
-        console.log("Data save for testing");
-    }).catch(function (err) {
-        console.log(err);
-    })
-    const cityObj = new cityRegister(
-        {
-            cityname: req.body.myObj.city,
-            region: [regionObj._id]
-        }
-    )
-
-
-    cityObj.save().then(function (data) {
+            schoolname: req.body.myObj.school_name,
+            schoolemail: req.body.myObj.school_email,
+            city: req.body.myObj.city,
+            region: req.body.myObj.region,
+            area: req.body.myObj.area,
+        })
+    schoolDataObj.save().then(function (data) {
         console.log("Data save");
+
     }).catch(function (err) {
         console.log(err);
     })
+    return res.redirect('/registered-school');
 
+})
 
-
-
-
-
-    // const schoolDataObj = new schoolData(
-    //     {
-    //      cityObj: [{
-    //         cityname:req.body.myObj.city,
-    //         region:[req.body.myObj.region]
-    //      }
-    //      ] ,
-    //      regionObj: [{
-    //         regionname:req.body.myObj.region,
-    //         area:[req.body.myObj.area]
-    //      }
-    //      ] 
-    //      ,schoolemail:req.body.myObj.school_email
-    //     // schoolname: req.body.myObj.school_name,
-    //     // schoolemail: req.body.myObj.school_email,
-    //     // city: req.body.myObj.city,
-    //     // region: req.body.myObj.region,
-    //     // area: req.body.myObj.area,
-    // })
-
-    // schoolDataObj.save().then(function (data) {
-    //     console.log("Data save");
-    // }).catch(function (err) {
-    //     console.log(err);
-    // })
-    return res.redirect('/teacher-dashboard');
+app.get('/registered-school', (req, res) => {
+    res.send('viewRegisteredSchool.html')
 })
 
 // delete student
-app.post('/deleteStudent', (req, res) => {
+app.post('/deleteStudent', Techauth, (req, res) => {
     studentData.deleteOne({
         email: req.body.data.email
     }).then(function (data) {
@@ -553,30 +345,55 @@ app.post('/deleteStudent', (req, res) => {
     }).catch(function (err) {
         console.log(err)
     })
+})
 
+app.post('/deleteSchool', adminauth, (req, res) => {
+    schoolData.deleteOne({
+        _id: req.body.data.id
+    }).then(function (data) {
+        return res.json(data)
+    }).catch(function (err) {
+        console.log(err)
+    })
+})
+
+app.post('/fetchallAreaSchool', (req, res) => {
+    console.log(req.body)
+    var areaName = req.body.area;
+    schoolData.aggregate(
+        [
+            { $match: { area: areaName } }
+        ]
+    ).then(function (data) {
+        console.log(data)
+        res.json(data)
+    }).catch(function (err) {
+        console.log(err)
+    })
 })
 
 // get school name
-// app.get('/schoolName', (req, res) => {
-//     schoolData.find().then(function (data) {
-//         return res.json(data)
-//     }).catch(function (err) {
-//         console.log(err)
-//     })
-// })
+app.get('/schoolName', (req, res) => {
+    schoolData.find().then(function (data) {
+        return res.json(data)
+    }).catch(function (err) {
+        console.log(err)
+    })
+})
 
 // get area name
-// app.get('/areaName', (req, res) => {
-//     schoolData.find().then(function (data) {
-//         return res.json(data)
-//     }).catch(function (err) {
-//         console.log(err)
-//     })
-// })
+app.get('/areaName', (req, res) => {
+    schoolData.find().then(function (data) {
+        return res.json(data)
+    }).catch(function (err) {
+        console.log(err)
+    })
+})
 
 // fetch all students that are of that school
 app.post('/indiviualSchoolStudent', (req, res) => {
     var schoolName = req.body.data.school;
+    console.log(schoolName)
     var limit = req.body.data.limit;
 
     var schoolPip = [
@@ -646,56 +463,53 @@ app.post('/criteria', (req, res) => {
 })
 
 // fetch top 3 students of that area 
-// app.post('/topAreaStudent', (req, res) => {
-//     var areaName = req.body.data.area;
-//     schoolData.aggregate(
-//         [
-//             { $match: { area: areaName } }
-//         ]
-//     ).then(function (data) {
-//         var schoolList = []
-//         for (let i = 0; i < data.length; i++) {
-//             schoolList.push(data[i].schoolname);
-//         }
+app.post('/topAreaStudent', (req, res) => {
+    var areaName = req.body.data.area;
+    schoolData.aggregate(
+        [
+            { $match: { area: areaName } }
+        ]
+    ).then(function (data) {
+        var schoolList = []
+        for (let i = 0; i < data.length; i++) {
+            schoolList.push(data[i].schoolname);
+        }
 
-//         var schoolAreaPip = [
-//             {
-//                 $match: {
-//                     school: {
-//                         $in: schoolList
-//                     }
-//                 }
-//             },
+        var schoolAreaPip = [
+            {
+                $match: {
+                    school: {
+                        $in: schoolList
+                    }
+                }
+            },
 
-//             { $unwind: "$marks" },
-//             {
-//                 '$group': {
-//                     _id: { rollNo: "$rollNo", name: "$name", school: "$school", email: "$email" },
-//                     'total': { '$sum': '$marks.marks' }
-//                 }
-//             },
-//             {
-//                 $project: {
-//                     'percent': { $round: [{ $multiply: [{ $divide: ["$total", 500] }, 100] }, 1] },
-//                     'totalMarks': '$total'
-//                 }
-//             },
-//             { $sort: { totalMarks: -1 } },
-//             { $limit: 3 }
-//         ]
-//         studentData.aggregate(schoolAreaPip).then(function (data) {
-//             return res.json(data)
-//         }).catch(function (err) {
-//             console.log(err)
-//         })
-//     }).catch(function (err) {
-//         console.log(err)
-//     })
+            { $unwind: "$marks" },
+            {
+                '$group': {
+                    _id: { rollNo: "$rollNo", name: "$name", school: "$school", email: "$email" },
+                    'total': { '$sum': '$marks.marks' }
+                }
+            },
+            {
+                $project: {
+                    'percent': { $round: [{ $multiply: [{ $divide: ["$total", 500] }, 100] }, 1] },
+                    'totalMarks': '$total'
+                }
+            },
+            { $sort: { totalMarks: -1 } },
+            { $limit: 3 }
+        ]
+        studentData.aggregate(schoolAreaPip).then(function (data) {
+            return res.json(data)
+        }).catch(function (err) {
+            console.log(err)
+        })
+    }).catch(function (err) {
+        console.log(err)
+    })
 
-// })
-
-
-
+})
 
 // top 3 student of db
 app.get('/topStudent', (req, res) => {
@@ -735,7 +549,7 @@ function paginationResult(model) {
 
             // const limit = parseInt(req.query.limit)
             let limit = await model.countDocuments().exec() / 3;
-
+            
             if (page == 1) {
                 limit = Math.ceil(limit)
             }
@@ -745,7 +559,7 @@ function paginationResult(model) {
             const startIndex = (page - 1) * limit;
             const endIndex = page * limit;
             const result = {};
-
+            
             result.result = await model.find({ temail: req.body.data.email }).limit(limit).skip(startIndex).exec();
             res.paginationResult = result;
             next();
