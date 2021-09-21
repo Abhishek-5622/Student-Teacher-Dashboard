@@ -1,3 +1,9 @@
+<div class="nav">
+  <a href='/Teachlogout'>
+    <button type="button" class="btn btn-danger logout_container" ng-model="singleModel">
+      Logout
+    </button></a>
+</div>
 <div class="div_heading">
   <center>
     <h1>Student Details</h1>
@@ -16,7 +22,25 @@
       ng-model="sName" required>
   </div><br>
 
+
   <div class="mb-3 ">
+    <label for="exampleFormControlInput2" class="form-label mylabel">DOB: </label>
+  <div class="row">
+    <div class="col-md-12">
+      <p class="input-group">
+        <input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="dt" is-open="popup1.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" alt-input-formats="altInputFormats"/>
+        <span class="input-group-btn">
+          <button type="button" class="btn btn-default" ng-click="open1()"><i class="glyphicon glyphicon-calendar"></i></button>
+        </span>
+      </p>
+    </div>
+    </div>
+  
+
+
+
+
+  <div class="mb-6 ">
     <label for="exampleFormControlInput2" class="form-label mylabel">Email address: </label>
     <input type="email" class="form-control" id="exampleFormControlInput2" placeholder="name@example.com required"
       ng-model="sEmail">
@@ -72,10 +96,7 @@
     <input type="text" class="form-control" placeholder="Enter class" ng-model="sclass" required>
   </div><br>
 
-  <!-- <div class="mb-3 ">
-    <label for="exampleFormControlInput6" class="form-label mylabel">School : </label>
-    <input type="text" class="form-control" placeholder="Enter School name" ng-model="School" required>
-  </div><br> -->
+ 
 
   <div class="mb-3 ">
     <label for="exampleFormControlInput6" class="form-label mylabel">School : </label><br>

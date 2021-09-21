@@ -1,3 +1,44 @@
+
+<i class="fas fa-chevron-circle-down" ng-click="isCollapsedHorizontal = !isCollapsedHorizontal"></i>
+
+<hr>
+	<div class="horizontal-collapse" uib-collapse="isCollapsedHorizontal" horizontal>
+    
+    <div class="nav">
+      <button type="button" class="btn btn-success" ng-model="singleModel" ng-click="analticFn()" >
+        ANALYTIC
+      </button>
+     
+      <div ng-controller="mainController">
+      <a href="javascript:void(null);" class="btn btn-primary modelDiv" data-toggle="modal" ng-click="showPopup()"><i class="material-icons"></i> <span>Add City</span></a>
+    </div>
+    
+        <button type="button" class="btn btn-success logout_container" ng-model="singleModel" ng-click="addNewAdmin()">
+          Add Admin
+        </button>
+    
+    
+        <div class="btn-group " uib-dropdown>
+          <button id="split-button" type="button" class="btn btn-primary btnDesign">School</button>
+          <button type="button" class="btn btn-primary btnDesign" uib-dropdown-toggle>
+            <span class="caret "></span>
+            <span class="sr-only ">Split button!</span>
+          </button>
+          <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="split-button">
+            <li role="menuitem" ng-click="addSchoolScreenFn()" class='list'>Add School</li>
+            <li class="divider"></li>
+            <li role="menuitem" ng-click="viewAllRegisterSchool()" class='list'>View All School</li>
+          </ul>
+        </div>
+    
+    
+        <a href='/adminlogout'>
+          <button type="button" class="btn btn-danger logout_container" ng-model="singleModel">
+            Logout
+          </button></a>
+      </div>
+    
+	</div>
 <center><h1>ANALYTIC</h1></center>
 
 <div class="panel panel-default ">
@@ -28,7 +69,7 @@
 <div class="area_Box">
 
 <select class='areaSelect' ng-model="areaName" >
-  <option ng-repeat="y in uniqueNames track by $index" value="{{y}}">{{y}}</option>
+  <option ng-repeat="y in areaNameList track by $index" value="{{y}}">{{y}}</option>
   </select>
 
           <button type="button" class="btn btn-success" ng-model="singleModel" ng-click="FetchTop3StudentOfArea(areaName)" >

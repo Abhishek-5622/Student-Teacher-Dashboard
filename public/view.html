@@ -1,44 +1,38 @@
+
 <div class="modal-header">
-    <h3 class="modal-title" id="modal-title">Add School</h3>
+    <h3 class="modal-title" id="modal-title">ADD CITY</h3>
    </div>
    <div class="modal-body" id="modal-body">
    
-        <div class="form-group modalDiv"> 
-             <label for="school_name" class="col-md-2 control-label modallable">School Name: </label> 
-             <div class="col-md-10"> 
-              <input type="text"  ng-model="school_name" value="" class="form-control" /> 
+        <div class="form-group"> 
+             <label for="Region" class="col-md-4 control-label">Region Name</label> 
+             <div class="col-md-8"> 
+              <input type="text"  ng-model="region" value="" class="form-control" /> 
              </div> 
          </div>
-         <br>
-        <div class="form-group modalDiv"> 
-             <label for="school_email" class="col-md-2 control-label modallable">School Email: </label> 
-             <div class="col-md-10"> 
-              <input type="text"  ng-model="school_email" value="" class="form-control" /> 
+         <br><br>
+        <div class="form-group"> 
+             <label for="city" class="col-md-4 control-label">City Name</label> 
+             <div class="col-md-8"> 
+              <input type="text"  ng-model="city" value="" class="form-control" /> 
              </div> 
          </div> 
-         <br>
-        <div class="form-group modalDiv"> 
-             <label for="area" class="col-md-2 control-label modallable">Area: </label> 
-             <div class="col-md-10"> 
-              <input type="text"  ng-model="area" value="" class="form-control"  /> 
-             </div> 
-         </div> 
-         <br>
-         <div class="form-group modalDiv"> 
-            <label for="city" class="col-md-2 control-label modallable">City: </label> 
-            <div class="col-md-10"> 
-             <input type="text"  ng-model="city" value="" class="form-control"  /> 
-            </div> 
-        </div> 
-       
-       <br><br>
+         <br><br>
+         <div class="form-group"> 
+              <label for="area" class="col-md-4 control-label">Area Name</label> 
+              <div class="col-md-8"> 
+               <input type="text"  ng-model="area" value="" class="form-control" /> 
+              </div> 
+          </div> 
+       <br>
+    
       
    
    
    </div>
-   <br>
    <div class="modal-footer">
-    <button class="btn btn-primary" type="button" ng-click="ok()">Add</button>
+       
+    <button class="btn btn-primary" type="button" ng-click="ok(region,city,area)">Add</button>
     <button class="btn btn-warning" type="button" ng-click="cancelModal()">Cancel</button>
    
    </div>

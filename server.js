@@ -9,7 +9,6 @@ var bodyParser = require("body-parser")
 const path = require('path');
 const cookieParser = require('cookie-parser')
 const hbs = require('hbs')
-// const auth = require('./middleware/auth')
 const Techauth = require('./middleware/teachAuth')
 const adminauth = require('./middleware/adminAuth')
 const UserRegister = require('./Model/register');
@@ -17,14 +16,13 @@ const TeacherRegister = require('./Model/teacherRegister')
 const studentData = require('./Model/studentData')
 const adminRegister = require('./Model/adminRegister')
 const schoolData = require('./Model/schoolRegister')
+const CityRegister = require('./Model/city')
+const AreaRegister = require('./Model/area')
 var JSAlert = require("js-alert");
 const querystring = require('querystring');
 var passport = require('passport');
 const { response } = require('express');
 require('./middleware/studentPassport')(passport)
-
-// var LocalStrategy = require('passport-local').Strategy;
-// require('./middleware/passportLocal')(passport)
 
 
 // get port
@@ -181,7 +179,7 @@ app.post('/getuser', async (req, res) => {
 // add passportjs middleware for authenication
 app.get('/student-dashboard', userAuth,
     function (req, res) {
-        
+
         return res.json({ 'email': req.query.email })
     })
 
@@ -332,6 +330,32 @@ app.post('/addSchoolDetails', (req, res) => {
 
 })
 
+app.post('/addcity', (req, res) => {
+    CityRegister.update({ city: req.body.data.city, region: req.body.data.region },
+        { city: req.body.data.city, region: req.body.data.region }, { upsert: true }).then(
+            function (data) {
+                console.log("citydata", data)
+            }
+        ).catch(function (err) {
+            console.log(err);
+        })
+    res.send('City Add')
+})
+
+app.post('/addArea', (req, res) => {
+    AreaRegister.update({ area: req.body.data2.area, city: req.body.data2.city }, { area: req.body.data2.area, city: req.body.data2.city }
+        , { upsert: true }).then(
+            function (data) {
+                console.log('areadata', data)
+            }
+        ).catch(function (err) {
+            console.log(err);
+        })
+    res.send('Area Add')
+})
+
+
+
 app.get('/registered-school', (req, res) => {
     res.send('viewRegisteredSchool.html')
 })
@@ -380,6 +404,36 @@ app.get('/schoolName', (req, res) => {
         console.log(err)
     })
 })
+app.post('/getRegionList', (req, res) => {
+    CityRegister.find().then(
+        function (data) {
+            return res.json(data)
+        }).catch(function (err) {
+            console.log(err)
+        })
+
+})
+
+app.post('/getareaList', (req, res) => {
+    AreaRegister.find({ city: req.body.data.city }).then(
+        function (data) {
+            return res.json(data)
+        }).catch(function (err) {
+            console.log(err)
+        })
+})
+
+
+
+app.post('/getcityList', (req, res) => {
+    CityRegister.find({ region: req.body.data.region }).then(
+        function (data) {
+            return res.json(data)
+        }).catch(function (err) {
+            console.log(err)
+        })
+})
+
 
 // get area name
 app.get('/areaName', (req, res) => {
@@ -389,6 +443,8 @@ app.get('/areaName', (req, res) => {
         console.log(err)
     })
 })
+
+
 
 // fetch all students that are of that school
 app.post('/indiviualSchoolStudent', (req, res) => {
@@ -543,13 +599,14 @@ app.get('/topStudent', (req, res) => {
 
 // pagination function
 function paginationResult(model) {
+    
     return async (req, res, next) => {
         try {
             const page = parseInt(req.query.page) || 1
 
             // const limit = parseInt(req.query.limit)
             let limit = await model.countDocuments().exec() / 3;
-            
+
             if (page == 1) {
                 limit = Math.ceil(limit)
             }
@@ -559,7 +616,7 @@ function paginationResult(model) {
             const startIndex = (page - 1) * limit;
             const endIndex = page * limit;
             const result = {};
-            
+
             result.result = await model.find({ temail: req.body.data.email }).limit(limit).skip(startIndex).exec();
             res.paginationResult = result;
             next();

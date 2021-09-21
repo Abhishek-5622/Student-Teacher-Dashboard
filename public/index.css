@@ -246,11 +246,11 @@ margin-bottom: 1.5rem;
 }
 
 .pagination_nav{
-    margin-left: 42%;
+    /* margin-left: 7%; */
 }
 
 .searchBox{
-    margin-left: 40rem;
+    margin-left: 12rem;
     width:50%;
     margin-bottom:3rem;
 }
@@ -345,4 +345,40 @@ margin-bottom: 1.5rem;
 #field2{
 margin-top: 2rem;
 }
+.modelDiv{
+    height: 4rem;
+}
+.dropdownStyle{
+    width: 89rem;
+    height: 3.4rem;
+    margin-left:1.5rem;
+    /* margin-top: 1rem; */
 
+}
+.btnDesign{
+    height: 4rem;
+}
+.list{
+    padding: 1rem;
+}
+.mybox{
+    width:100%;
+}
+.horizontal-collapse {
+    height: 70px;
+  }
+  .navbar-collapse.in {
+    overflow-y: hidden;
+  }
+
+.wrapperx{
+margin-left: 48%;
+}
+.fa-chevron-circle-down{
+    font-size: 3rem;
+    color: black;
+    margin-left: 3rem;
+}
+.fa-chevron-circle-down:hover{
+    color: blue;
+}
