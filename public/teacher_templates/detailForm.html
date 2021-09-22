@@ -4,13 +4,13 @@
       Logout
     </button></a>
 </div>
-<div class="div_heading">
+<div class="div_heading" >
   <center>
     <h1>Student Details</h1>
   </center>
 </div>
 
-<div class="form_conatiner">
+<div class="form_conatiner" ng-controller="addStudentController">
   <div class="mb-3 ">
     <label for="exampleFormControlInput6" class="form-label mylabel">Roll no: </label>
     <input type="Number" class="form-control" placeholder="Enter Roll Number" ng-model="rollNo" required>
@@ -35,11 +35,8 @@
       </p>
     </div>
     </div>
+    </div>
   
-
-
-
-
   <div class="mb-6 ">
     <label for="exampleFormControlInput2" class="form-label mylabel">Email address: </label>
     <input type="email" class="form-control" id="exampleFormControlInput2" placeholder="name@example.com required"
@@ -96,8 +93,6 @@
     <input type="text" class="form-control" placeholder="Enter class" ng-model="sclass" required>
   </div><br>
 
- 
-
   <div class="mb-3 ">
     <label for="exampleFormControlInput6" class="form-label mylabel">School : </label><br>
     <select class='schoolSelect' ng-model="School">
@@ -105,9 +100,6 @@
       </select>
   </div><br>
   
-  
-
-
   <div class="mb-3 ">
     <label for="exampleFormControlInput7" class="form-label mylabel">Marks: </label>
     <table class="table">
@@ -177,3 +169,6 @@
   </button>
 </div>
 </div>
+
+
+

@@ -142,20 +142,15 @@ app.config(function ($routeProvider) {
         .when("/", {
             templateUrl: "main.html"
         })
+        .when("/error", {
+            templateUrl: "error.html",
+            controller: 'error'
+        })
         .when("/student-login", {
-            templateUrl: "login.html"
+            templateUrl: "student_templates/login.html"
         })
         .when("/student-new_user", {
-            templateUrl: "newUser.html"
-        })
-        .when("/teacher-login", {
-            templateUrl: "teacherlogin.html"
-        })
-        .when("/teacher-new_user", {
-            templateUrl: "newTeacher.html"
-        })
-        .when("/error", {
-            templateUrl: "error.html"
+            templateUrl: "student_templates/newUser.html"
         })
         .when("/student-dashboard", {
             resolve: {
@@ -165,18 +160,15 @@ app.config(function ($routeProvider) {
                     }
                 }
             },
-            templateUrl: "studentDashboard.html"
+            templateUrl: "student_templates/studentDashboard.html"
+        })
+        
+        .when("/teacher-login", {
+            templateUrl: "teacher_templates/teacherlogin.html"
         })
 
-        .when("/analytic", {
-            resolve: {
-                function($location) {
-                    if (document.cookie == '' || localStorage.getItem('roles') !== 'admin') {
-                        $location.path('/error')
-                    }
-                }
-            },
-            templateUrl: "analytic.html"
+        .when("/teacher-new_user", {
+            templateUrl: "teacher_templates/newTeacher.html"
         })
         .when("/teacher-dashboard", {
             resolve: {
@@ -186,8 +178,22 @@ app.config(function ($routeProvider) {
                     }
                 }
             },
-            templateUrl: "teacherDashboard.html"
+            templateUrl: "teacher_templates/teacherDashboard.html"
         })
+
+
+        .when("/analytic", {
+            resolve: {
+                function($location) {
+                    if (document.cookie == '' || localStorage.getItem('roles') !== 'admin') {
+                        $location.path('/error')
+                    }
+                }
+            },
+            templateUrl: "admin_templates/analytic.html",
+            controller: 'analysisController'
+        })
+        
         .when("/auth_dasboard", {
             resolve: {
                 function($location) {
@@ -196,10 +202,10 @@ app.config(function ($routeProvider) {
                     }
                 }
             },
-            templateUrl: "auth_dashboard.html"
+            templateUrl: "admin_templates/auth_dashboard.html"
         })
         .when("/admin-login", {
-            templateUrl: "admin_login.html"
+            templateUrl: "admin_templates/admin_login.html"
         })
         .when("/student-details", {
             resolve: {
@@ -209,7 +215,8 @@ app.config(function ($routeProvider) {
                     }
                 }
             },
-            templateUrl: "detailForm.html"
+            templateUrl: "teacher_templates/detailForm.html",
+            controller:'addStudentController'
         })
 
         .when("/view-student-details", {
@@ -220,7 +227,7 @@ app.config(function ($routeProvider) {
                     }
                 }
             },
-            templateUrl: "viewStudentDetails.html"
+            templateUrl: "teacher_templates/viewStudentDetails.html"
         })
         .when("/registered-school", {
             resolve: {
@@ -230,7 +237,7 @@ app.config(function ($routeProvider) {
                     }
                 }
             },
-            templateUrl: "viewRegisteredSchool.html"
+            templateUrl: "admin_templates/viewRegisteredSchool.html"
         })
         .when("/addNewAdmin", {
             resolve: {
@@ -240,7 +247,7 @@ app.config(function ($routeProvider) {
                     }
                 }
             },
-            templateUrl: "addNewAdmin.html"
+            templateUrl: "admin_templates/addNewAdmin.html"
         })
         .otherwise({ redirectTo: '/' });
 })
@@ -321,46 +328,7 @@ app.controller('mainCtrl', function ($scope, $http, $rootScope, $location, myFac
         })
     }
 
-    // get all student details 
-    $scope.getstudentdetailsFn = function (rollNo, Name, email, mobileNo, address, city, area, motherName, fatherName, classCoordinator, temail, sclass, school, maths, science, english, hindi, sst) {
-        if (rollNo === undefined || Name === undefined || email === undefined || mobileNo === undefined || address === undefined || city === undefined || area === undefined || motherName === undefined || fatherName === undefined || classCoordinator === undefined || temail === undefined || sclass === undefined || school === undefined || maths === undefined || science === undefined || english === undefined || hindi === undefined || sst === undefined) {
-            alert("Enter All details")
-        }
-        else {
-            var data = {
-                rollNo: rollNo,
-                name: Name,
-                email: email,
-                mobileNo: mobileNo,
-                address: address,
-                city: city,
-                area: area,
-                motherName: motherName,
-                fatherName: fatherName,
-                classCoordinator: classCoordinator,
-                sclass: sclass,
-                temail: temail,
-                school: school,
-                marks: [
-                    { maths: maths },
-                    { science: science },
-                    { english: english },
-                    { hindi: hindi },
-                    { sst: sst }
-                ]
-            }
-            $http.post("http://localhost:8000/addStudentDetails", {
-                data
-            }).then(function (response) {
-                if (response.status == 200) {
-                    $rootScope.TeacherDetails2(temail, 3)
-                    $location.path('/teacher-dashboard');
-                }
-            }).catch(function (error) {
-                console.log(error);
-            })
-        }
-    }
+    
 
     // get Teacher data=>teacher login
     $scope.getTeacherData = function (uname, uemail, upassword) {
@@ -508,58 +476,7 @@ app.controller('mainCtrl', function ($scope, $http, $rootScope, $location, myFac
         return $scope.uniqueNames
     }
 
-    // fetch student details on the basic of school name 
-    $scope.FetchAnalyticDetails = function (fetchSchool, limit) {
-
-        var data = {
-            school: fetchSchool,
-            limit: limit
-        }
-        $http.post("http://localhost:8000/indiviualSchoolStudent", { data }).then(function (res) {
-            $rootScope.indivualschoolStudentArr = res.data
-
-        }).catch(function (err) {
-            console.log(err)
-        })
-    }
-
-    // fetch top 3 student 
-    $scope.FetchTop3StudentDetails = function () {
-        $http.get("http://localhost:8000/topStudent").then(function (res) {
-            $rootScope.indivualschoolStudentArr = res.data
-        }).catch(function (err) {
-            console.log(err)
-        })
-    }
-
-    // fetch top 3 student od a area 
-    $scope.FetchTop3StudentOfArea = function (AreaName) {
-        var data = {
-            area: AreaName
-        }
-        $http.post("http://localhost:8000/topAreaStudent", { data }).then(function (res) {
-
-            $rootScope.indivualschoolStudentArr = res.data
-
-        }).catch(function (err) {
-            console.log(err)
-        })
-
-    }
-
-    // fetch student detail acc to percentage
-    $scope.fetchstudentAccToPer = function (schoolName, crteria) {
-
-        var data = {
-            school: schoolName,
-            crteria: crteria
-        }
-        $http.post("http://localhost:8000/criteria", { data }).then(function (res) {
-            $rootScope.indivualschoolStudentArr = res.data
-        }).catch(function (err) {
-            console.log(err)
-        })
-    }
+    
 
     // cancel form => go to analytic
     $scope.cancaeldetailsFn = function () {
@@ -694,16 +611,6 @@ $scope.isCollapsedHorizontal = false;
     $scope.addSchoolScreenFn = function () {
         $location.path('/auth_dasboard')
     }
-
-    // $scope.totalItems = 12;
-    // $scope.currentPage = 1;
-  
-   
-  
-    // $scope.pageChanged = function() {
-    //   $log.log('Page changed to: ' + $scope.currentPage);
-    // };
-
     
 
     $rootScope.FetchAllregionName = function () {
@@ -741,94 +648,7 @@ $scope.isCollapsedHorizontal = false;
         })
     }
 
-    $scope.today = function () {
-        $scope.dt = new Date();
-    };
-    $scope.today();
-
-    $scope.clear = function () {
-        $scope.dt = null;
-    };
-
-    $scope.inlineOptions = {
-        customClass: getDayClass,
-        minDate: new Date(),
-        showWeeks: true
-    };
-
-    $scope.dateOptions = {
-        dateDisabled: disabled,
-        formatYear: 'yy',
-        startingDay: 1
-    };
-
-    // Disable weekend selection
-    function disabled(data) {
-        var date = data.date,
-            mode = data.mode;
-        return mode === 'day' && (date.getDay() === 0 || date.getDay() === 6);
-    }
-
-    $scope.toggleMin = function () {
-        $scope.inlineOptions.minDate = $scope.inlineOptions.minDate ? null : new Date();
-        $scope.dateOptions.minDate = $scope.inlineOptions.minDate;
-    };
-
-    $scope.toggleMin();
-
-    $scope.open1 = function () {
-        $scope.popup1.opened = true;
-    };
-
-
-    $scope.date = new Date().getDate();
-    $scope.month = new Date().getMonth();
-    $scope.year = new Date().getUTCFullYear();
-    $scope.dt = new Date($scope.year, $scope.month, $scope.date);
-    $scope.formats = ['dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
-    $scope.format = $scope.formats[0];
-    $scope.altInputFormats = ['M!/d!/yyyy'];
-
-    $scope.popup1 = {
-        opened: false
-    };
-
-
-    var tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    var afterTomorrow = new Date();
-    afterTomorrow.setDate(tomorrow.getDate() + 1);
-    $scope.events = [
-        {
-            date: tomorrow,
-            status: 'full'
-        },
-        {
-            date: afterTomorrow,
-            status: 'partially'
-        }
-    ];
-
-    function getDayClass(data) {
-        var date = data.date,
-            mode = data.mode;
-        if (mode === 'day') {
-            var dayToCheck = new Date(date).setHours(0, 0, 0, 0);
-
-            for (var i = 0; i < $scope.events.length; i++) {
-                var currentDay = new Date($scope.events[i].date).setHours(0, 0, 0, 0);
-
-                if (dayToCheck === currentDay) {
-                    return $scope.events[i].status;
-                }
-            }
-        }
-
-        return '';
-    }
-
-
-    $scope.oneAtATime = true;
+  
 
   $scope.groups = [
     {
@@ -865,7 +685,7 @@ app.controller('mainController', function ($scope, $http, $routeParams, $uibModa
         $scope.modalInstance = $uibModal.open({
             ariaLabelledBy: 'modal-title',
             ariaDescribedBy: 'modal-body',
-            templateUrl: 'view.html',
+            templateUrl: 'admin_templates/view.html',
             controller: 'ModelHandlerController',
             controllerAs: '$ctrl',
             size: 'lg',
@@ -915,7 +735,4 @@ app.controller("ModelHandlerController", function ($scope, $uibModalInstance, $h
             alert("Please enter all details")
         }
     }
-
-
 });
-

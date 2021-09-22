@@ -42,8 +42,6 @@ app.use(passport.initialize())
 const userAuth = passport.authenticate('jwt', { session: false })
 
 
-// const userAuth = passport.authenticate('local')
-
 // routing
 app.get('/', (req, res) => {
     res.sendFile('index.html')
@@ -276,6 +274,7 @@ app.post('/seeAllStudentData', paginationResult(studentData), (req, res) => {
 
 app.post('/addStudentDetails', Techauth, (req, res) => {
     const [maths, science, english, hindi, sst] = req.body.data.marks;
+    
     console.log(req.body.data.marks)
     studentData.create({
         rollNo: req.body.data.rollNo,
