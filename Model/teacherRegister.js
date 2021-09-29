@@ -1,4 +1,4 @@
-// For teacher
+// For Teacher Modal
 
 // require
 const mongoose = require('mongoose');
@@ -11,12 +11,12 @@ const TeacherSchema = new mongoose.Schema(
     {
         name: {
             type: String,
-            require: true,
+            required: true,
             trim:true
         },
         email: {
             type: String,
-            require: true,
+            required: true,
             unique: true,
             validate:{
                 validator: validator.isEmail,
@@ -26,26 +26,16 @@ const TeacherSchema = new mongoose.Schema(
         },
         password: {
             type: String,
-            require: true,
+            required: true,
             trim:true
-        },
-        tokens: [
-            {
-                token: {
-                    type: String,
-                    require: true
-                }
-            }
-        ]
+        }
     }
 )
 
 // generate token
 TeacherSchema.methods.generateAuthToken = function () {
     // create token
-    const token = jwt.sign({ _id: this._id.toString() }, process.env.SECRETE_KEY2);
-    // add in db
-    this.tokens = this.tokens.concat({ token: token })
+    const token = jwt.sign({ _id: this._id.toString() }, process.env.SECRETE_KEY1);
     // save 
     this.save().then(function () {
         console.log("token save")

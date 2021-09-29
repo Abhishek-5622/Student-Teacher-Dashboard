@@ -151,7 +151,7 @@ margin-bottom: 1.5rem;
     margin-bottom: 5rem;
 }
 
-.nav{
+.Mynav{
     display: flex;
     background-color: lightslategrey;
     justify-content: flex-end;
@@ -264,7 +264,7 @@ margin-bottom: 1.5rem;
     font-size: 1.7rem;
 }
 .schoolSelect{
-    width: 100%;
+    width: 90%;
     height: 3.5rem;
 
 }
@@ -278,7 +278,6 @@ margin-bottom: 1.5rem;
     justify-content: space-around;
     margin-bottom: 2rem;
     margin-top: 2rem;
-    /* background-color: lightskyblue; */
 }
 .fetchBtn{
     width:15rem;
@@ -381,4 +380,37 @@ margin-left: 48%;
 }
 .fa-chevron-circle-down:hover{
     color: blue;
+}
+.panelHeight{
+    font-size: 2.5rem;
+}
+#mylabel{
+    margin-left: 1rem;
+    font-size: 1.5rem;
+}
+.menu_container{
+    display: flex;
+    background-color: gainsboro;
+    align-items: center;
+    justify-content: center;
+    justify-items: center;
+    height: 4.5rem;
+}
+.menu{
+    margin-left: 110rem;
+    margin-top: 3rem;
+}
+.tmenu{
+    padding-left: 131rem;
+}
+.myTBtn{
+    height: 4.5rem;
+}
+.smenu{
+    padding-left: 152rem;
+}
+.ValidationError{
+    color: red;
+    background-color: beige;
+    padding-left: 2rem;
 }

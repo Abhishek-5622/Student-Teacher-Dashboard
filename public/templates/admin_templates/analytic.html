@@ -1,0 +1,150 @@
+<div class="menu_container">
+  <i class="fas fa-chevron-circle-down" ng-click="isCollapsedHorizontal = !isCollapsedHorizontal"></i>
+
+  <div class="horizontal-collapse menu" uib-collapse="isCollapsedHorizontal" horizontal>
+
+    <div class="Mynav">
+      <button type="button" class="btn btn-success" ng-model="singleModel" ng-click="analticFn()">
+        ANALYTIC
+      </button>
+
+      <div ng-controller="mainController">
+        <a href="javascript:void(null);" class="btn btn-primary modelDiv" data-toggle="modal" ng-click="showPopup()"><i
+            class="material-icons"></i> <span>Add City</span></a>
+      </div>
+
+      <button type="button" class="btn btn-success logout_container" ng-model="singleModel" ng-click="addNewAdmin()">
+        Add Admin
+      </button>
+
+      <div class="btn-group " uib-dropdown>
+        <button id="split-button" type="button" class="btn btn-primary btnDesign">School</button>
+        <button type="button" class="btn btn-primary btnDesign" uib-dropdown-toggle>
+          <span class="caret "></span>
+          <span class="sr-only ">Split button!</span>
+        </button>
+        <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="split-button">
+          <li role="menuitem" ng-click="addSchoolScreenFn()" class='list'>Add School</li>
+          <li class="divider"></li>
+          <li role="menuitem" ng-click="viewAllRegisterSchool()" class='list'>View All School</li>
+        </ul>
+      </div>
+
+      <button type="button" class="btn btn-danger logout_container" ng-model="singleModel" ng-click="Adminlogout()">
+        Logout
+      </button>
+    </div>
+
+  </div>
+</div>
+<hr>
+
+<div ng-controller="analysisController" class='container-fluid'>
+
+
+  <div class="panel panel-default ">
+    <div class="panel-heading panelHeight"> <b>ANALYTIC</b> </div>
+    <br>
+
+    <form>
+      <div class="mb-5 ">
+        <label for="exampleFormControlInput66" id='mylabel' class="form-label">School Name : </label>
+        <select class='schoolSelect' ng-model="fetchSchool" ng-change="FetchAnalyticDetails(fetchSchool,1)">
+          <option ng-repeat="x in SchoolNameList track by $index" value="{{x}}">{{x}}</option>
+        </select>
+      </div><br>
+
+      <br>
+      <div class="btnBox">
+        <button type="button" class="btn btn-success" ng-model="singleModel"
+          ng-click='FetchAnalyticDetails(fetchSchool,3)'>
+          Top 3 (School)
+        </button>
+
+
+        <button type="button" class="btn btn-success" ng-model="singleModel" ng-click='FetchTop3StudentDetails()'>
+          Top 3 (India)
+        </button>
+
+        <div class="area_Box">
+
+          <select class='areaSelect' ng-model="regionName">
+            <option ng-repeat="y in regionSchoolNameList track by $index" value="{{y}}">{{y}}</option>
+          </select>
+
+          <button type="button" class="btn btn-success" ng-model="singleModel"
+            ng-click="FetchTop3StudentOfRegion(regionName)">
+            Top 3 (Region)
+          </button>
+        </div>
+
+        <div class="area_Box">
+
+          <select class='areaSelect' ng-model="cityName">
+            <option ng-repeat="y in citySchoolNameList track by $index" value="{{y}}">{{y}}</option>
+          </select>
+
+          <button type="button" class="btn btn-success" ng-model="singleModel"
+            ng-click="FetchTop3StudentOfCity(cityName)">
+            Top 3 (City)
+          </button>
+        </div>
+
+        <div class="area_Box">
+
+          <select class='areaSelect' ng-model="areaName">
+            <option ng-repeat="y in areaNameList track by $index" value="{{y}}">{{y}}</option>
+          </select>
+
+          <button type="button" class="btn btn-success" ng-model="singleModel"
+            ng-click="FetchTop3StudentOfArea(areaName)">
+            Top 3 (Area)
+          </button>
+        </div>
+
+
+        <div class="area_Box">
+
+          <input type='text' ng-model='crteria' class='crteriaBox'>
+          &nbsp;&nbsp;
+          <button type="button" class="btn btn-success" ng-model="singleModel"
+            ng-click="fetchstudentAccToPer(fetchSchool,crteria)">
+            Fetch
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div class="panel panel-default ">
+    <div class="panel-heading"> <b>STUDENT DETAILS</b> </div>
+
+    <table class="table table-striped table-hover">
+      <tr height="1.5rem">
+        <td scope="col">Rank</td>
+        <td scope="col">Roll Number</td>
+        <td scope="col">Student Name</td>
+        <td scope="col">Email</td>
+        <td scope="col">School Name</td>
+        <td scope="col">Total Marks Obtained</td>
+        <td scope="col">Percentage (%)</td>
+
+        <td scope="col"></td>
+        <td scope="col"></td>
+      </tr>
+      <tr height="1.5rem" ng-repeat="student in indivualschoolStudentArr track by $index">
+        <td text-align='center'>{{$index+1}}</td>
+        <td text-align='center'>{{student._id.rollNo}}</td>
+        <td text-align='center'>{{student._id.name}}</td>
+        <td text-align='center'>{{student._id.email}}</td>
+        <td text-align='center'>{{student._id.school}}</td>
+        <td text-align='center'>{{student.totalMarks}}</td>
+        <td text-align='center'>{{student.percent}}</td>
+
+
+      </tr>
+
+    </table>
+
+  </div>
+</div>

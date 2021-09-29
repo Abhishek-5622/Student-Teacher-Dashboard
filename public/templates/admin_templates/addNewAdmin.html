@@ -1,0 +1,85 @@
+<div class="menu_container">
+  <i class="fas fa-chevron-circle-down" ng-click="isCollapsedHorizontal = !isCollapsedHorizontal"></i>
+
+  <div class="horizontal-collapse menu" uib-collapse="isCollapsedHorizontal" horizontal>
+
+    <div class="Mynav">
+      <button type="button" class="btn btn-success" ng-model="singleModel" ng-click="analticFn()">
+        ANALYTIC
+      </button>
+
+      <div ng-controller="mainController">
+        <a href="javascript:void(null);" class="btn btn-primary modelDiv" data-toggle="modal" ng-click="showPopup()"><i
+            class="material-icons"></i> <span>Add City</span></a>
+      </div>
+
+      <button type="button" class="btn btn-success logout_container" ng-model="singleModel" ng-click="addNewAdmin()">
+        Add Admin
+      </button>
+
+      <div class="btn-group " uib-dropdown>
+        <button id="split-button" type="button" class="btn btn-primary btnDesign">School</button>
+        <button type="button" class="btn btn-primary btnDesign" uib-dropdown-toggle>
+          <span class="caret "></span>
+          <span class="sr-only ">Split button!</span>
+        </button>
+        <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="split-button">
+          <li role="menuitem" ng-click="addSchoolScreenFn()" class='list'>Add School</li>
+          <li class="divider"></li>
+          <li role="menuitem" ng-click="viewAllRegisterSchool()" class='list'>View All School</li>
+        </ul>
+      </div>
+
+      <button type="button" class="btn btn-danger logout_container" ng-model="singleModel" ng-click="Adminlogout()">
+        Logout
+      </button>
+    </div>
+
+  </div>
+</div>
+<hr>
+
+<u>
+  <center>
+    <h1>Admin Panel</h1>
+  </center>
+</u>
+
+
+<div class="admin_div container">
+  <div class="modal-header">
+    <h3 class="modal-title mod" id="modal-title ">Add New Admin</h3>
+  </div>
+  <div class="modal-body" id="modal-body">
+
+    <div class="form-group modalDiv">
+      <label for="adminName" class="col-md-2 mod control-label modallable">Admin Name: </label>
+      <div class="col-md-10">
+        <input type="text" ng-model="admin_name" value="" class="form-control" />
+      </div>
+    </div>
+    <br>
+    <div class="form-group modalDiv">
+      <label for="admin_email" class="col-md-2 mod control-label modallable">Admin Email: </label>
+      <div class="col-md-10">
+        <input type="email" ng-model="admin_email" value="" class="form-control" />
+      </div>
+    </div>
+
+    <br>
+    <div class="form-group modalDiv">
+      <label for="admin_password" class="col-md-2 control-label mod modallable">Password: </label>
+      <div class="col-md-10">
+        <input type="password" ng-model="admin_password" value="" class="form-control" />
+      </div>
+    </div>
+    <br><br>
+  </div>
+  <br>
+  <div class="modal-footer">
+    <button class="btn btn-primary myBtn" type="button"
+      ng-click="addAdminFn(admin_name,admin_email,admin_password)">Add</button>
+
+
+  </div>
+</div>

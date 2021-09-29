@@ -1,19 +1,21 @@
-// For city
+// For Area Modal
 
 // require
 const mongoose = require('mongoose');
 const validator = require('validator');
-// create schema
 
+// create schema
 const AreaSchema = new mongoose.Schema(
     {
-        area :{
+        area: {
             type:String,
-            require:true
+            required:true,
+            trim:true
         },
         city: {
             type: String,
-            require: true,
+            required: true,
+            trim:true
         }
     }
 )

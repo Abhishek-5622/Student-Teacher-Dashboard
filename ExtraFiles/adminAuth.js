@@ -2,18 +2,18 @@
 
 // require jwt and schema
 const jwt = require('jsonwebtoken');
-const UserRegister = require('../Model/register');
+const adminRegister = require('../Model/adminRegister');
 
 // authenication
 // 1. cookies se token get kiya
 // 2. verify token n secrete key
 // 3 check the the token is present in our db or not
 // 4 call next function
-const auth = async (req, res, next) => {
+const adminauth = async (req, res, next) => {
     try {
         const token = req.cookies.jwt;
-        const verifyUser = jwt.verify(token, process.env.SECRETE_KEY1)
-        const user = await UserRegister.findOne({ _id: verifyUser._id })
+        const verifyUser = jwt.verify(token, process.env.SECRETE_KEY3)
+        const user = await adminRegister.findOne({ _id: verifyUser._id })
 
         req.token = token;
         req.user = user;
@@ -25,8 +25,8 @@ const auth = async (req, res, next) => {
             res.this.status(401).send(error);
         }
         else {
-            res.send("<h1>You can't see this page without login. So Please login first</h1>")
+            res.status(401).send("<h1>You can't see this page without login. So Please login first</h1>")
         }
     }
 }
-module.exports = auth;
+module.exports = adminauth;

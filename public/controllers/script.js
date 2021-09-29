@@ -4,8 +4,24 @@ var app = angular.module('portfolio', ['ngRoute', 'ui.bootstrap', 'ngTouch', 'ng
 
 // interceptor 
 app.config(function ($httpProvider) {
-    $httpProvider.interceptors.push(["$rootScope", function ($rootScope) {
+    $httpProvider.interceptors.push(["$rootScope", function ($rootScope, $q) {
         return {
+            request: function (config) {
+                console.log('request started...');
+                //Validating the requests and assign the csrf token to each requests   
+                var token = document.cookie
+                config.headers['x-csrf-token'] = token;
+                return config;
+            },
+            requestError: function (rejection) {
+                console.log(rejection);
+                // Contains the data about the error on the request and return the promise rejection.    
+                return $q.reject(rejection);
+            },
+            response: function (result) {
+                console.log('request completed');
+                return result;
+            },
             // handle request response
             responseError: function (response) {
                 console.log('response error started...');
@@ -15,7 +31,7 @@ app.config(function ($httpProvider) {
                     $rootScope.showFeedBack($rootScope.ErrorMsg)
                 }
                 if (response.status === 401) {
-                    $rootScope.ErrorMsg = "Unauthorized Error";
+                    $rootScope.ErrorMsg = "Unauthorized User";
                     $rootScope.showFeedBack($rootScope.ErrorMsg)
                 }
 
@@ -43,57 +59,27 @@ app.run(["$rootScope", "$timeout", function ($rootScope, $timeout) {
     }
 }]);
 
+// Factory
 app.factory('myFact', function ($rootScope, $location, $http) {
     return {
-        FillStudentDetails: FillStudentDetails,
-        Login: Login,
         Signup: Signup,
-        DeleteDetails: DeleteDetails
+        Login: Login,
+        FillStudentDetails: FillStudentDetails,
+        DeleteDetails: DeleteDetails,
+        Logout: Logout,
+        Message:Message
     }
 
-    function FillStudentDetails() {
-        $location.path('/student-details')
-    }
-
-    function Login(url, data, uemail, key, Fn, role) {
-        $http.post(url, {
-            data
-        }).then(function (response) {
-            if (response.status == 200) {
-                // $window.location.href ='/student-dashboard?email='+uemail;  
-                localStorage.setItem(key, uemail);
-                localStorage.setItem('roles', role);
-                Fn(uemail);
-                // $location.path('/student-dashboard')  
-            }
-            else {
-                alert("Please Enter valid details");
-
-
-            }
-        }).catch(function (error) {
-            console.log(error);
-        })
-    }
-
+    // Signup
     function Signup(name, email, password, confirmPassword, url, mypath) {
+        // empty data
         if (name === undefined || email === undefined || password === undefined || confirmPassword === undefined) {
-            // alert("Please fill all details")
-            $.bootstrapGrowl("Please fill all details", {
-                ele: 'body', // which element to append to
-                type: 'info', // (null, 'info', 'error', 'success')
-                offset: { from: 'top', amount: 20 }, // 'top', or 'bottom'
-                align: 'right', // ('left', 'right', or 'center')
-                width: 250, // (integer, or 'auto')
-                delay: 4000,
-                allow_dismiss: true,
-                stackup_spacing: 10 // spacing between consecutively stacked growls.
-            });
+            Message('danger','Please fill all details')
         }
         else {
             var flag = 0;
             if (password !== confirmPassword) {
-                alert("Password and confirm Password must be same")
+                Message('danger','Password and confirm Password must be same')
                 flag = 1;
             }
             if (flag == 0) {
@@ -105,9 +91,12 @@ app.factory('myFact', function ($rootScope, $location, $http) {
                 $http.post(url, {
                     data
                 }).then(function (response) {
-
                     if (response.status == 200) {
                         $location.path(mypath);
+                        Message('success','Account Created, Plz login')
+                    }
+                    else if(response.status==400){
+                        Message('danger','Email Already Exist')
                     }
                 }).catch(function (error) {
                     console.log(error);
@@ -116,23 +105,71 @@ app.factory('myFact', function ($rootScope, $location, $http) {
         }
     }
 
+    function Login(url, data, uemail, key, Fn, role) {
+        localStorage.setItem('roles', role);
+        $rootScope.GetRole();
+        $http.post(url, {
+            data
+        }).then(function (response) {
+            if (response.status == 200) {
+                localStorage.setItem(key, uemail);
+                
+                // Go to dashBoard
+                Fn(uemail);
+                Message('success','Login Successfully')
+            }
+            else {
+                Message('danger','Enter Correct Login Details')
+            }
+        }).catch(function (error) {
+            console.log(error);
+        })
+    }
+
+    function Logout(url) {
+        $http.get(url).then(function (data) {
+            if (data.status === 200) {
+                $location.path('/')
+                Message('danger','Logout')
+            }
+        }).catch(function (err) {
+            console.log(err)
+        })
+    }
+
+    function FillStudentDetails() {
+        $location.path('/student-details')
+    }
+
     function DeleteDetails(url, data, path, task) {
         $http.post(url, { data }).then(function (data) {
             $location.path(path)
             if (task === 'regSchool') {
                 $rootScope.SchoolNameArrFn()
                 $rootScope.areaNameArrFn()
+                $rootScope.schoolPageChanged()
             }
             else {
-                $rootScope.TeacherDetails2(task, 1)
+                $rootScope.pageChanged()
             }
 
         }).catch(function (err) {
             console.log(err)
         })
     }
-
-
+    
+    function Message(type,msg){
+        $.bootstrapGrowl(msg, {
+            ele: 'body',
+            type: type, 
+            offset: { from: 'top', amount: 20 }, 
+            align: 'right',
+            width: 250, 
+            delay: 4000,
+            allow_dismiss: true,
+            stackup_spacing: 10 
+        });
+    }
 })
 
 // routing
@@ -142,112 +179,118 @@ app.config(function ($routeProvider) {
         .when("/", {
             templateUrl: "main.html"
         })
-        .when("/error", {
-            templateUrl: "error.html",
-            controller: 'error'
-        })
         .when("/student-login", {
-            templateUrl: "student_templates/login.html"
+            templateUrl: "templates/student_templates/login.html",
+            controller: 'studentController'
         })
         .when("/student-new_user", {
-            templateUrl: "student_templates/newUser.html"
+            templateUrl: "templates/student_templates/newUser.html",
+            controller: 'studentController'
         })
         .when("/student-dashboard", {
             resolve: {
-                function($location) {
+                function($location,myFact) {
                     if (document.cookie == '' || localStorage.getItem('roles') !== 'student') {
-                        $location.path('/error')
+                        myFact.Message('danger',"You Are Not Allow To Access This Page")
+                        $location.path('/')
                     }
                 }
             },
-            templateUrl: "student_templates/studentDashboard.html"
-        })
-        
-        .when("/teacher-login", {
-            templateUrl: "teacher_templates/teacherlogin.html"
+            templateUrl: "templates/student_templates/studentDashboard.html",
+            controller: 'studentController'
         })
 
+        .when("/teacher-login", {
+            templateUrl: "templates/teacher_templates/teacherlogin.html",
+            controller: 'teacherController'
+        })
         .when("/teacher-new_user", {
-            templateUrl: "teacher_templates/newTeacher.html"
+            templateUrl: "templates/teacher_templates/newTeacher.html",
+            controller: 'teacherController'
         })
         .when("/teacher-dashboard", {
             resolve: {
-                function($location) {
+                function($location,myFact) {
                     if (document.cookie == '' || localStorage.getItem('roles') !== 'teacher') {
-                        $location.path('/error')
+                        myFact.Message('danger',"You Are Not Allow To Access This Page")
+                        $location.path('/')
                     }
                 }
             },
-            templateUrl: "teacher_templates/teacherDashboard.html"
-        })
-
-
-        .when("/analytic", {
-            resolve: {
-                function($location) {
-                    if (document.cookie == '' || localStorage.getItem('roles') !== 'admin') {
-                        $location.path('/error')
-                    }
-                }
-            },
-            templateUrl: "admin_templates/analytic.html",
-            controller: 'analysisController'
-        })
-        
-        .when("/auth_dasboard", {
-            resolve: {
-                function($location) {
-                    if (document.cookie == '' || localStorage.getItem('roles') !== 'admin') {
-                        $location.path('/error')
-                    }
-                }
-            },
-            templateUrl: "admin_templates/auth_dashboard.html"
-        })
-        .when("/admin-login", {
-            templateUrl: "admin_templates/admin_login.html"
+            templateUrl: "templates/teacher_templates/teacherDashboard.html",
+            controller: 'teacherController'
         })
         .when("/student-details", {
             resolve: {
-                function($location) {
+                function($location,myFact) {
                     if (document.cookie == '' || localStorage.getItem('roles') !== 'teacher') {
-                        $location.path('/error')
+                        myFact.Message('danger',"You Are Not Allow To Access This Page")
+                        $location.path('/')
                     }
                 }
             },
-            templateUrl: "teacher_templates/detailForm.html",
-            controller:'addStudentController'
+            templateUrl: "templates/teacher_templates/detailForm.html",
+            controller: 'teacherController'
         })
 
-        .when("/view-student-details", {
+        .when("/analytic", {
             resolve: {
-                function($location) {
-                    if (document.cookie == '' || (localStorage.getItem('roles') !== 'admin' && localStorage.getItem('roles') !== 'teacher')) {
-                        $location.path('/error')
+                function($location,myFact) {
+                    if (document.cookie == '' || localStorage.getItem('roles') !== 'admin') {
+                        myFact.Message('danger',"You Are Not Allow To Access This Page")
+                        $location.path('/')
                     }
                 }
             },
-            templateUrl: "teacher_templates/viewStudentDetails.html"
+            templateUrl: "templates/admin_templates/analytic.html",
+            controller: 'analysisController'
+        })
+        .when("/auth_dasboard", {
+            resolve: {
+                function($location,myFact) {
+                    if (document.cookie == '' || localStorage.getItem('roles') !== 'admin') {
+                        myFact.Message('danger',"You Are Not Allow To Access This Page")
+                        $location.path('/')
+                    }
+                }
+            },
+            templateUrl: "templates/admin_templates/auth_dashboard.html"
+        })
+        .when("/admin-login", {
+            templateUrl: "templates/admin_templates/admin_login.html"
+        })
+        .when("/view-student-details", {
+            resolve: {
+                function($location,myFact) {
+                    if (document.cookie == '' || (localStorage.getItem('roles') !== 'admin' && localStorage.getItem('roles') !== 'teacher')) {
+                        myFact.Message('danger',"You Are Not Allow To Access This Page")
+                        $location.path('/')
+                    }
+                }
+            },
+            templateUrl: "templates/teacher_templates/viewStudentDetails.html"
         })
         .when("/registered-school", {
             resolve: {
-                function($location) {
+                function($location,myFact) {
                     if (document.cookie == '' || localStorage.getItem('roles') !== 'admin') {
-                        $location.path('/error')
+                        myFact.Message('danger',"You Are Not Allow To Access This Page")
+                        $location.path('/')
                     }
                 }
             },
-            templateUrl: "admin_templates/viewRegisteredSchool.html"
+            templateUrl: "templates/admin_templates/viewRegisteredSchool.html"
         })
         .when("/addNewAdmin", {
             resolve: {
-                function($location) {
+                function($location,myFact) {
                     if (document.cookie == '' || localStorage.getItem('roles') !== 'admin') {
-                        $location.path('/error')
+                        myFact.Message('danger',"You Are Not Allow To Access This Page")
+                        $location.path('/')
                     }
                 }
             },
-            templateUrl: "admin_templates/addNewAdmin.html"
+            templateUrl: "templates/admin_templates/addNewAdmin.html"
         })
         .otherwise({ redirectTo: '/' });
 })
@@ -257,153 +300,29 @@ app.controller('mainCtrl', function ($scope, $http, $rootScope, $location, myFac
     // function call when page load
     $scope.init = function () {
         var email = localStorage.getItem('C_Email');
-        $scope.getStudentDetails(email)
         var Temail = localStorage.getItem('T_Email');
-        $rootScope.TeacherDetails2(Temail, 1)
         $scope.techEmail = Temail
         $rootScope.SchoolNameArrFn();
         $rootScope.areaNameArrFn();
+        $rootScope.getallRegionSchool()
         $rootScope.FetchAllregionName()
+        $rootScope.getallCitySchool()
+        $rootScope.GetRole();
     };
 
-    // go to student details page
-    $scope.FillStudentDetails = myFact.FillStudentDetails;
-
-    // student signup
-    $scope.Studentsignup = function (name, email, password, confirmPassword) {
-        myFact.Signup(name, email, password, confirmPassword, "http://localhost:8000/add", '/student-login')
-    }
-
-    // getData => Student login
-    $scope.getData = function (uname, uemail, upassword) {
-        var data = {
-            "name": uname,
-            "email": uemail,
-            "password": upassword,
+    // get role 
+    $rootScope.GetRole=function(){
+        var data={
+            myrole:localStorage.getItem('roles')
         }
-        myFact.Login("http://localhost:8000/getuser", data, uemail, 'C_Email', $scope.myData, 'student')
-    }
-
-    // add data => To Get API
-    $scope.myData = function (myemail) {
-        $http.get("http://localhost:8000/student-dashboard?email=" + myemail).then(function (response) {
-            if (response.status == 200) {
-                $scope.getStudentDetails(myemail)
-                $location.path('/student-dashboard')
-            }
-            else if (response.status == 402) {
-                $location.path('/error')
-            }
-        }).catch(function (error) {
-            console.log(error);
+        $http.post('/getRoleValue',{data}).then(function(data){
+            console.log(data);
+        }).catch(function(err){
+            console.log(err)
         })
     }
 
-    // function that get student details for student dashboard
-    $scope.getStudentDetails = function (email) {
-        var data = {
-            email: email
-        }
-        $http.post("http://localhost:8000/seeStudentData", {
-            data
-        }).then(function (response) {
-            if (response.status == 200) {
-                $rootScope.name = response.data.name;
-                $rootScope.email = response.data.email;
-                $rootScope.mobileNo = response.data.mobileNo;
-                $rootScope.address = response.data.address;
-                $rootScope.city = response.data.city;
-                $rootScope.area = response.data.area;
-                $rootScope.motherName = response.data.motherName;
-                $rootScope.fatherName = response.data.fatherName;
-                $rootScope.rollNo = response.data.rollNo;
-                $rootScope.classCoordinator = response.data.classCoordinator;
-                $rootScope.marks = response.data.marks;
-                $rootScope.sclass = response.data.sclass;
-                $rootScope.school = response.data.school;
-            }
-
-        }).catch(function (error) {
-            console.log(error);
-        })
-    }
-
-    
-
-    // get Teacher data=>teacher login
-    $scope.getTeacherData = function (uname, uemail, upassword) {
-        var data = {
-            "name": uname,
-            "email": uemail,
-            "password": upassword
-        }
-        myFact.Login("http://localhost:8000/getTeacher", data, uemail, 'T_Email', $rootScope.TeacherData, 'teacher')
-    }
-
-    // get Api call
-    $rootScope.TeacherData = function (myemail) {
-
-        $http.get("http://localhost:8000/teacher-dashboard?email=" + myemail).then(function (response) {
-
-            if (response.status == 200) {
-                $location.path('/teacher-dashboard')
-                $rootScope.TeacherDetails2(myemail, 1)
-            }
-            else {
-
-            }
-        }).catch(function (error) {
-            console.log(error);
-
-        })
-    }
-
-    // Teacher signup
-    $scope.Teachhersignup = function (name, email, password, confirmPassword) {
-        myFact.Signup(name, email, password, confirmPassword, "http://localhost:8000/addTeacher", '/teacher-login')
-    }
-
-    // teacher details
-    $rootScope.TeacherDetails2 = function (email, p) {
-
-        $rootScope.arr = []
-        var data = {
-            email: email
-        }
-
-        $http.post("http://localhost:8000/seeAllStudentData?page=" + p, {
-            data
-        }).then(function (response) {
-            $rootScope.teacherArr = response.data.result;
-            // $rootScope.teacherArr = response.data
-            for (let i = 0; i < $rootScope.teacherArr.length; i++) {
-                if ($rootScope.teacherArr[i].temail === email) {
-                    $rootScope.arr.push($rootScope.teacherArr[i]);
-                }
-            }
-        }).catch(function (error) {
-            console.log(error);
-        })
-    }
-
-    // pagination fn
-    $scope.paginationFn = function (p) {
-        $scope.pagination($scope.techEmail, p)
-    }
-
-    // redirect and get data of all students
-    $scope.pagination = function (email, p) {
-        $location.path('/teacher-dashboard')
-        $rootScope.TeacherDetails2(email, p)
-    }
-
-    // open 
-    $scope.openDetails = function (email) {
-        $scope.getStudentDetails(email)
-        $location.path('/view-student-details')
-    }
-
-    // Go to teacher Dashboard
+    // Go to  Dashboard
     $scope.goToTeacherDashBoard = function () {
         if (localStorage.getItem('roles') == 'admin') {
             $location.path('/auth_dasboard')
@@ -412,99 +331,74 @@ app.controller('mainCtrl', function ($scope, $http, $rootScope, $location, myFac
 
             $location.path('/teacher-dashboard')
         }
-
     }
 
-    // sort features of table
-    $scope.sort = function (keyname) {
-        $scope.sortKey = keyname;
-        $scope.reverse = !$scope.reverse;
+    // ********************Admin***********************
+
+    // go to new admin tab
+    $scope.addNewAdmin = function () {
+        $location.path("/addNewAdmin")
     }
 
-    // delete student details
-    $scope.deleteDetails = function (email) {
-        var data = {
-            email: email
+    // create new admin 
+    $scope.addAdminFn = function (newAdminName, newAdminEmail, newAdminPassword) {
+        if (newAdminName === undefined || newAdminEmail === undefined || newAdminPassword === undefined) {
+            myFact.Message('danger',"Please enter all details")
         }
-        myFact.DeleteDetails("http://localhost:8000/deleteStudent", data, '/teacher-dashboard', $scope.techEmail)
-    }
-
-    // go to analytic page
-    $scope.analticFn = function () {
-        $location.path("/analytic")
-    }
-
-    // get all school name present (Db) in array
-    $rootScope.SchoolNameArrFn = function () {
-        $scope.SchoolNameList = [];
-        $scope.SchoolAllDetailsArr = [];
-
-        $http.get("http://localhost:8000/schoolName").then(function (response) {
-            $scope.SchoolAllDetailsArr = response.data;
-            for (let i = 0; i < response.data.length; i++) {
-                $scope.SchoolNameList.push(response.data[i].schoolname)
+        else {
+            var data = {
+                "name": newAdminName,
+                "email": newAdminEmail,
+                "password": newAdminPassword
             }
-        }).catch(function (error) {
-            console.log(error);
-        })
+            $http.post("http://localhost:8000/admin/addNewAdmin", {
+                data
+            }).then(function (response) {
+                if (response.status == 200) {
+                    $location.path('/auth_dasboard');
+                    myFact.Message('success','Account Created')
+                }
+                else if(response.status==400){
+                    myFact.Message('danger','Email already Exist')
+                }
+            }).catch(function (error) {
+                console.log(error);
+            })
+        }
     }
 
-    // get all area name present (Db) in array
-    $rootScope.areaNameArrFn = function () {
-        $scope.areaNameList = [];
-        $http.get("http://localhost:8000/areaName").then(function (response) {
-            for (let i = 0; i < response.data.length; i++) {
-                $scope.areaNameList.push(response.data[i].area)
-            }
-            $scope.areaNameList = $scope.removeDuplicate($scope.areaNameList)
-            // $scope.removeDuplicate($scope.areaNameList)
-
-        }).catch(function (error) {
-            console.log(error);
-        })
-    }
-
-    // function that remove duplicate from array
-    $scope.removeDuplicate = function (arr) {
-        $scope.uniqueNames = [];
-        arr.forEach((val, i, arr) => {
-
-            if (!$scope.uniqueNames.includes(val)) {
-                $scope.uniqueNames.push(val);
-            }
-        });
-        return $scope.uniqueNames
-    }
-
-    
-
-    // cancel form => go to analytic
-    $scope.cancaeldetailsFn = function () {
-        $location.path('/teacher-dashboard')
-    }
-
+    // Admin login 
     $scope.getAdminData = function (name, email, password) {
-
-        var data = {
-            name: name,
-            email: email,
-            password: password
+        if (name === undefined || email === undefined || password === undefined) {
+            myFact.Message('danger',"Please enter all details")
         }
-        $http.post('http://localhost:8000/adminAuth', { data }).then(function (data) {
-
+        else {
             localStorage.setItem('roles', 'admin');
-            $location.path('/auth_dasboard')
-        }).catch(function (err) {
-            console.log(err)
-        })
+            $rootScope.GetRole();
+            var data = {
+                name: name,
+                email: email,
+                password: password
+            }
+            $http.post('http://localhost:8000/admin/adminAuth', { data }).then(function (data) {
+                if (data.status == 200) {
+                    
+                    $location.path('/auth_dasboard')
+                }
+                else {
+                    myFact.Message('danger','Enter Correct Login Details')
+                }
+
+            }).catch(function (err) {
+                console.log(err)
+            })
+        }
     }
 
-
-
+    // Add school
     $scope.AddSchoolFn = function (school_name, school_email, city, region, area) {
-
         if (school_name === undefined || school_email === undefined || city === undefined || region === undefined || area === undefined) {
-            alert("Please enter the infomation")
+            myFact.Message('danger','Please fill all infomation')
         }
         else {
             var myObj = {
@@ -514,67 +408,144 @@ app.controller('mainCtrl', function ($scope, $http, $rootScope, $location, myFac
                 region: region,
                 area: area
             }
-
-            $http.post("http://localhost:8000/addSchoolDetails", {
+            $http.post("http://localhost:8000/admin/addSchoolDetails", {
                 myObj
             }).then(function (response) {
-
-                if (response.status == 200) {
-
+                if (response.status == 200) 
+                {
+                    myFact.Message('success',"School Added")
                     $location.path('/registered-school')
                     $scope.init()
-                    $rootScope.SchoolNameArrFn();
+                    $rootScope.schoolPageChanged()
+                    
                 }
-
-
+                // else if(response.status==400){
+                //     myFact.Message('danger',"Validation Fail")
+                // }
             }).catch(function (error) {
                 console.log("Myerr", error);
             })
         }
     }
 
-    $scope.addNewAdmin = function () {
-        $location.path("/addNewAdmin")
-    }
-
-    $scope.addAdminFn = function (newAdminName, newAdminEmail, newAdminPassword) {
-        if (newAdminName === undefined || newAdminEmail === undefined || newAdminPassword === undefined) {
-            alert("Please enter all details")
-        }
-        else {
-            var data = {
-                "name": newAdminName,
-                "email": newAdminEmail,
-                "password": newAdminPassword
-            }
-            $http.post("http://localhost:8000/addNewAdmin", {
-                data
-            }).then(function (response) {
-                if (response.status == 200) {
-                    $location.path('/auth_dasboard');
-                }
-            }).catch(function (error) {
-                console.log(error);
-            })
-        }
-    }
-
+    // go to register school page
     $scope.viewAllRegisterSchool = function () {
         $location.path('/registered-school')
     }
 
+    // Pagination 
+    // function that give total no. of school document modal
+    $scope.getLengthOfSchool = function () {
+        $http.get('/admin/getSchoolLength').then(function (data) {
+            $scope.totalitems = data.data
+        }).catch(function (err) {
+            console.log(err)
+        })
+    }
+    $scope.getLengthOfSchool()
 
+    let data = {};
+    data.page = 0;
+    data.limit = 5;
+    $scope.itemsPerPage = 5;
+    $scope.currentPage = 1;
+    $scope.pagination = {
+        currentPage: 1
+    };
+    $scope.SchoolAllDetailsArr = []
+    $rootScope.schoolPageChanged = function () {
+        // console.log("Page changed to: " + $scope.pagination.currentPage);
+        data.page = $scope.pagination.currentPage - 1;
+        $http.post("/admin/fetchSchoolDetails", data).then(function (response) {
+            $scope.SchoolAllDetailsArr = response.data
+        });
+    };
+    $rootScope.schoolPageChanged()
+
+    // function that remove duplicate from array
+    $scope.removeDuplicate = function (arr) {
+        $scope.uniqueNames = [];
+        arr.forEach((val, i, arr) => {
+            if (!$scope.uniqueNames.includes(val)) {
+                $scope.uniqueNames.push(val);
+            }
+        });
+        return $scope.uniqueNames
+    }
+
+    // go to analytic page
+    $scope.analticFn = function () {
+        $location.path("/analytic")
+    }
+
+     // get all school name present (Db) in array
+     $rootScope.SchoolNameArrFn = function () {
+        $scope.SchoolNameList = [];
+        $http.get("http://localhost:8000/analysis/schoolName").then(function (response) {
+            for (let i = 0; i < response.data.length; i++) {
+                $scope.SchoolNameList.push(response.data[i].schoolname)
+            }
+        }).catch(function (error) {
+            console.log(error);
+        })
+    }
+
+    // get all region name present (Db) in array
+    $scope.regionSchoolNameList = [];
+    $rootScope.getallRegionSchool = function () {
+        $http.get("http://localhost:8000/analysis/schoolName").then(function (response) {
+            for (let i = 0; i < response.data.length; i++) {
+                $scope.regionSchoolNameList.push(response.data[i].region)
+            }
+            $scope.regionSchoolNameList = $scope.removeDuplicate($scope.regionSchoolNameList)
+        }).catch(function (error) {
+            console.log(error);
+        })
+    }
+
+     // get all city name present (Db) in array
+     $scope.citySchoolNameList = [];
+     $rootScope.getallCitySchool = function () {
+         $http.get("http://localhost:8000/analysis/schoolName").then(function (response) {
+             for (let i = 0; i < response.data.length; i++) {
+                 $scope.citySchoolNameList.push(response.data[i].city)
+             }
+             $scope.citySchoolNameList = $scope.removeDuplicate($scope.citySchoolNameList)
+         }).catch(function (error) {
+             console.log(error);
+         })
+     }
+
+    // get all area name present (Db) in array
+    $rootScope.areaNameArrFn = function () {
+        $scope.areaNameList = [];
+        $http.get("http://localhost:8000/analysis/schoolName").then(function (response) {
+            for (let i = 0; i < response.data.length; i++) {
+                $scope.areaNameList.push(response.data[i].area)
+            }
+            $scope.areaNameList = $scope.removeDuplicate($scope.areaNameList)
+        }).catch(function (error) {
+            console.log(error);
+        })
+    }
+
+    // cancel form => go to 
+    $scope.cancaeldetailsFn = function () {
+        $location.path('/teacher-dashboard')
+    }
+
+    // delete school
     $scope.deleteSchoolDetailsFromDb = function (id) {
         var data = {
             id: id
         }
-        myFact.DeleteDetails("http://localhost:8000/deleteSchool", data, '/registered-school', 'regSchool')
+        myFact.DeleteDetails("http://localhost:8000/admin/deleteSchool", data, '/registered-school', 'regSchool')
 
     }
 
+    // fetch all school of that area
     $scope.FetchAllSchoolAccToArea = function (areaName) {
-
-        $http.post('/fetchallAreaSchool', {
+        $http.post('/analysis/fetchallAreaSchool', {
             area: areaName
         }).then(function (data) {
             $scope.SchoolAllDetailsArr = data;
@@ -587,17 +558,17 @@ app.controller('mainCtrl', function ($scope, $http, $rootScope, $location, myFac
         })
     }
 
+    // for menu bar 
+    $scope.isCollapsed = true;
+    $scope.isCollapsedHorizontal = false;
 
-$scope.isCollapsed=true;
-$scope.isCollapsedHorizontal = false;
-
+    // fetch area
     $scope.FetchAllareaName = function (city) {
-
         $scope.areaNameArr = [];
         var data = {
             city: city
         }
-        $http.post('/getareaList', { data }).then(function (data) {
+        $http.post('/analysis/getareaList', { data }).then(function (data) {
 
             for (let i = 0; i < data.data.length; i++) {
                 $scope.areaNameArr.push(data.data[i].area)
@@ -611,33 +582,32 @@ $scope.isCollapsedHorizontal = false;
     $scope.addSchoolScreenFn = function () {
         $location.path('/auth_dasboard')
     }
-    
 
+    // fetch region
     $rootScope.FetchAllregionName = function () {
         $scope.regionNameList = [];
         var data = {
             my: "my"
         }
-        $http.post('/getRegionList', { data }).then(function (data) {
+        $http.post('/analysis/getRegionList', { data }).then(function (data) {
             for (let i = 0; i < data.data.length; i++) {
                 $scope.regionNameList.push(data.data[i].region)
             }
             $scope.regionNameList = $scope.removeDuplicate($scope.regionNameList)
-            console.log($scope.regionNameList )
+           
         }).catch(function (err) {
             console.log(err)
         })
 
     }
 
-
+    // fetch city
     $scope.FetchAllCityName = function (region) {
-
         $scope.cityNameArr = [];
         var data = {
             region: region
         }
-        $http.post('/getcityList', { data }).then(function (data) {
+        $http.post('/analysis/getcityList', { data }).then(function (data) {
 
             for (let i = 0; i < data.data.length; i++) {
                 $scope.cityNameArr.push(data.data[i].city)
@@ -648,91 +618,16 @@ $scope.isCollapsedHorizontal = false;
         })
     }
 
-  
-
-  $scope.groups = [
-    {
-      title: 'Dynamic Group Header - 1',
-      content: 'Dynamic Group Body - 1'
-    },
-    {
-      title: 'Dynamic Group Header - 2',
-      content: 'Dynamic Group Body - 2'
+    // Asmin logout
+    $scope.Adminlogout = function () {
+        myFact.Logout('/admin/adminlogout')
     }
-  ];
 
-  $scope.items = ['Item 1', 'Item 2', 'Item 3'];
+    $scope.closeAlert = function(index) {
+        $scope.alerts.splice(index, 1);
+      };
 
-  $scope.addItem = function() {
-    var newItemNo = $scope.items.length + 1;
-    $scope.items.push('Item ' + newItemNo);
-  };
-
-  $scope.status = {
-    isCustomHeaderOpen: false,
-    isFirstOpen: true,
-    isFirstDisabled: false
-  };
 });
 
 
-// create the controller and inject Angular's $scope
-app.controller('mainController', function ($scope, $http, $routeParams, $uibModal) {
 
-    $scope.showPopup = function () {
-
-        user = { 'region': '', 'city': "" };
-        $scope.modalInstance = $uibModal.open({
-            ariaLabelledBy: 'modal-title',
-            ariaDescribedBy: 'modal-body',
-            templateUrl: 'admin_templates/view.html',
-            controller: 'ModelHandlerController',
-            controllerAs: '$ctrl',
-            size: 'lg',
-            resolve: {
-                user: function () {
-                    return user;
-                }
-            }
-        });
-
-    }
-
-
-});
-
-app.controller("ModelHandlerController", function ($scope, $uibModalInstance, $http, $rootScope, $location) {
-
-
-    $scope.cancelModal = function () {
-        console.log("cancelmodal");
-        $uibModalInstance.result.catch(function () { $uibModalInstance.close(); });
-        $uibModalInstance.dismiss('close');
-    }
-
-    $scope.ok = function (region, city, area) {
-        if (region != undefined && city != undefined && area != undefined) {
-            var data = {
-                city: city,
-                region: region
-            }
-            var data2 = {
-                area: area,
-                city: city
-            }
-
-            var promise1 = $http.post('http://localhost:8000/addcity', { data })
-            var promise2 = $http.post('http://localhost:8000/addArea', { data2 })
-
-            Promise.all([promise1, promise2]).then(function (data) {
-                $rootScope.FetchAllregionName()
-            }).catch(function (err) {
-                console.log(err)
-            })
-            $uibModalInstance.close('save');
-        }
-        else{
-            alert("Please enter all details")
-        }
-    }
-});

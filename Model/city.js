@@ -1,23 +1,24 @@
-// For school
+// For City Modal
 
 // require
 const mongoose = require('mongoose');
 const validator = require('validator');
-// create schema
 
+// create schema
 const CitySchema = new mongoose.Schema(
     {
         city:{
             type:String,
-            require:true
+            required:true,
+            trim:true
         },
         region: {
             type: String,
-            require: true,
+            required: true,
+            trim:true
         }
     }
 )
-
 
 // create collection(table)
 const CityRegister = new mongoose.model("CityRegister", CitySchema);

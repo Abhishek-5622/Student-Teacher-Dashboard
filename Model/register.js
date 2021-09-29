@@ -1,5 +1,4 @@
-// For student
-
+// For Student Modal
 
 // require
 const mongoose = require('mongoose');
@@ -12,12 +11,12 @@ const userSchema = new mongoose.Schema(
     {
         name: {
             type: String,
-            require: true,
+            required: true,
             trim:true
         },
         email: {
             type: String,
-            require: true,
+            required: true,
             unique: true,
             validate: {
                 validator: validator.isEmail,
@@ -27,16 +26,9 @@ const userSchema = new mongoose.Schema(
         },
         password: {
             type: String,
-            require: true
-        },
-        // tokens: [
-        //     {
-        //         token: {
-        //             type: String,
-        //             require: true
-        //         }
-        //     }
-        // ]
+            required: true,
+            trim:true
+        }
     }
 )
 
@@ -44,8 +36,6 @@ const userSchema = new mongoose.Schema(
 userSchema.methods.generateAuthToken = function () {
     // it take 2 parameter : payload => id and secrete key of 32 character
     const token = jwt.sign({ _id: this._id.toString() }, process.env.SECRETE_KEY1);
-    // add in our database
-    // this.tokens = this.tokens.concat({ token: token })
     // save in db
     this.save().then(function () {
         console.log("token save")

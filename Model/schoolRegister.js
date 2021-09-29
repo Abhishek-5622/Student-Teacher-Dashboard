@@ -1,4 +1,4 @@
-// For school
+// For School Modal
 
 // require
 const mongoose = require('mongoose');
@@ -8,12 +8,12 @@ const SchoolSchema = new mongoose.Schema(
     {
         schoolname: {
             type: String,
-            require: true,
+            required: true,
             trim:true
         },
         schoolemail: {
             type: String,
-            require: true,
+            required: true,
             unique: true,
             validate: {
                 validator: validator.isEmail,
@@ -24,29 +24,23 @@ const SchoolSchema = new mongoose.Schema(
       
         city: {
             type: String,
-            require: true,
+            required: true,
             trim:true
         }
         ,
         region: {
             type: String,
-            require: true,
+            required: true,
             trim:true
         },
         area: {
             type: String,
-            require: true,
+            required: true,
             trim:true
         },
 
     }
 )
-
-
-
-
-
-
 
 // create collection(table)
 const SchoolRegister = new mongoose.model("SchoolRegister", SchoolSchema);

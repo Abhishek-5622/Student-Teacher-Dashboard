@@ -1,16 +1,21 @@
-<div class="nav">
-  <a href='/Teachlogout'>
-    <button type="button" class="btn btn-danger logout_container" ng-model="singleModel">
-      Logout
-    </button></a>
+<div class="menu_container tmenu">
+  <button type="button" class="btn btn-success myTBtn" ng-model="singleModel" ng-click="FillStudentDetails()">
+    ADD STUDENTS DETAILS
+  </button>
+
+
+  <button type="button" class="btn btn-danger logout_container" ng-model="singleModel" ng-click='Teacherlogout()'>
+    Logout
+  </button>
 </div>
-<div class="div_heading" >
+
+<div class="div_heading">
   <center>
     <h1>Student Details</h1>
   </center>
 </div>
 
-<div class="form_conatiner" ng-controller="addStudentController">
+<div class="form_conatiner" ng-controller="teacherController">
   <div class="mb-3 ">
     <label for="exampleFormControlInput6" class="form-label mylabel">Roll no: </label>
     <input type="Number" class="form-control" placeholder="Enter Roll Number" ng-model="rollNo" required>
@@ -25,18 +30,21 @@
 
   <div class="mb-3 ">
     <label for="exampleFormControlInput2" class="form-label mylabel">DOB: </label>
-  <div class="row">
-    <div class="col-md-12">
-      <p class="input-group">
-        <input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="dt" is-open="popup1.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" alt-input-formats="altInputFormats"/>
-        <span class="input-group-btn">
-          <button type="button" class="btn btn-default" ng-click="open1()"><i class="glyphicon glyphicon-calendar"></i></button>
-        </span>
-      </p>
+    <div class="row">
+      <div class="col-md-12">
+        <p class="input-group">
+          <input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="dt"
+            is-open="popup1.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close"
+            alt-input-formats="altInputFormats" />
+          <span class="input-group-btn">
+            <button type="button" class="btn btn-default" ng-click="open1()"><i
+                class="glyphicon glyphicon-calendar"></i></button>
+          </span>
+        </p>
+      </div>
     </div>
-    </div>
-    </div>
-  
+  </div>
+
   <div class="mb-6 ">
     <label for="exampleFormControlInput2" class="form-label mylabel">Email address: </label>
     <input type="email" class="form-control" id="exampleFormControlInput2" placeholder="name@example.com required"
@@ -85,7 +93,7 @@
 
   <div class="mb-3 ">
     <label for="exampleFormControlInput6" class="form-label mylabel">class coordinator email: </label>
-    <input type="text" class="form-control" placeholder="Class coordinator email" ng-model="temail" required>
+    <input type="email" class="form-control" placeholder="Class coordinator email" ng-model="temail" required>
   </div><br>
 
   <div class="mb-3 ">
@@ -97,9 +105,9 @@
     <label for="exampleFormControlInput6" class="form-label mylabel">School : </label><br>
     <select class='schoolSelect' ng-model="School">
       <option ng-repeat="x in SchoolNameList" value="{{x}}">{{x}}</option>
-      </select>
+    </select>
   </div><br>
-  
+
   <div class="mb-3 ">
     <label for="exampleFormControlInput7" class="form-label mylabel">Marks: </label>
     <table class="table">
@@ -108,67 +116,68 @@
         <td class="subject_name">Marks</td>>
         <td class="subject_name">Total Marks</td>
       </tr>
+     <div class='ValidationError' ng-if="mathsMarks<0 || mathsMarks>100 || sciMark<0 || sciMark>100 || EngMarks<0 || EngMarks>100 || HindiMarks<0 || HindiMarks>100 || sstMarks<0 || sstMarks>100">
+      <b>Error: </b> Enter mark between 0 to 100
+     </div>
       <tr>
         <td class="subject_name">Maths</td>
-        <td class="subject_name"><input type="text" class="size" id="exampleFormControlInput7" ng-model="mathsMarks"
+        <td class="subject_name"><input type="Number"  class="size" id="exampleFormControlInput7" ng-model="mathsMarks"
             required>
         </td>
-        <td class="subject_name"><input type="text" class="size" id="exampleFormControlInput8" value="100" disabled>
+        <td class="subject_name"><input type="Number" class="size" id="exampleFormControlInput8" value="100" disabled>
         </td>
       </tr>
 
       <tr>
         <td class="subject_name">Science</td>
-        <td class="subject_name"><input type="text" class="size" id="exampleFormControlInput9" ng-model="sciMark"
+        <td class="subject_name"><input type="Number" class="size" id="exampleFormControlInput9" ng-model="sciMark"
             required>
         </td>
-        <td class="subject_name"><input type="text" class="size" id="exampleFormControlInput10" value="100" disabled>
+        <td class="subject_name"><input type="Number" class="size" id="exampleFormControlInput10" value="100" disabled>
         </td>
       </tr>
 
       <tr>
         <td class="subject_name">English</td>
-        <td class="subject_name"><input type="text" class="size" id="exampleFormControlInput11" ng-model="EngMarks"
+        <td class="subject_name"><input type="Number" class="size" id="exampleFormControlInput11" ng-model="EngMarks"
             required>
         </td>
-        <td class="subject_name"><input type="text" class="size" id="exampleFormControlInput12" value="100" disabled>
+        <td class="subject_name"><input type="Number" class="size" id="exampleFormControlInput12" value="100" disabled>
         </td>
       </tr>
 
 
       <tr>
         <td class="subject_name">Hindi</td>
-        <td class="subject_name"><input type="text" class="size" id="exampleFormControlInput13" ng-model="HindiMarks"
+        <td class="subject_name"><input type="Number" class="size" id="exampleFormControlInput13" ng-model="HindiMarks"
             required>
         </td>
-        <td class="subject_name"><input type="text" class="size" id="exampleFormControlInput14" value="100" disabled>
+        <td class="subject_name"><input type="Number" class="size" id="exampleFormControlInput14" value="100" disabled>
         </td>
       </tr>
 
 
       <tr>
         <td class="subject_name">Social Science</td>
-        <td class="subject_name"><input type="text" class="size" id="exampleFormControlInput15" ng-model="sstMarks"
+        <td class="subject_name"><input type="Number" class="size" id="exampleFormControlInput15" ng-model="sstMarks"
             required>
         </td>
-        <td class="subject_name"><input type="text" class="size" id="exampleFormControlInput16" value="100" disabled>
+        <td class="subject_name"><input type="Number" class="size" id="exampleFormControlInput16" value="100" disabled>
         </td>
       </tr>
     </table>
 
   </div><br>
- 
- 
-<div class="bt_dv">
-  <button type="button" class="btn btn-primary submit_btn" ng-model="singleModel" ng-click="getstudentdetailsFn(rollNo,sName,sEmail,sMobileno,
+
+
+  <div class="bt_dv">
+    <button type="button" class="btn btn-primary submit_btn" ng-model="singleModel"
+      ng-click="getstudentdetailsFn(rollNo,sName,dt,sEmail,sMobileno,
   sAddress,city,area,sMotherName,sFatherName,classCoordinator,temail,sclass,School,mathsMarks,sciMark,EngMarks,HindiMarks,sstMarks)">
-    Submit
-  </button>
-  <button type="button" class="btn btn-danger submit_btn" ng-model="singleModel" ng-click="cancaeldetailsFn()">
-    Cancel
-  </button>
+      Submit
+    </button>
+    <button type="button" class="btn btn-danger submit_btn" ng-model="singleModel" ng-click="cancaeldetailsFn()">
+      Cancel
+    </button>
+  </div>
 </div>
-</div>
-
-
-

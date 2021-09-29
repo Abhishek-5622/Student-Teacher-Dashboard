@@ -6,10 +6,12 @@ const jwt = require('jsonwebtoken')
 require("dotenv").config();
 const validator = require('validator');
 
+// Subject sub schema
 const subjectSchema = new mongoose.Schema({
     title : String,
     marks : {
         type:Number,
+        required:true,
         min:0,
         max:100
     }
@@ -20,17 +22,21 @@ const studentDataSchema = new mongoose.Schema(
     {
         rollNo: {
             type: Number,
-            require: true,
+            required: true,
             unique:true
         },
         name: {
             type: String,
-            require: true,
+            required: true,
             trim:true
+        },
+        date:{
+            type: Date,
+            required:true
         },
         email: {
             type: String,
-            require: true,
+            required: true,
             unique: true,
             validate: {
                 validator: validator.isEmail,
@@ -40,45 +46,45 @@ const studentDataSchema = new mongoose.Schema(
         },
         mobileNo: {
             type: Number,
-            require: true
+            required: true
         },
         address: {
             type: String,
-            require: true
+            required: true
         },
         city: {
             type: String,
-            require: true,
+            required: true,
             trim:true
         },
         area: {
             type: String,
-            require: true,
+            required: true,
             trim:true
         },
         motherName: {
             type: String,
-            require: true,
+            required: true,
             trim:true
         },
         fatherName: {
             type: String,
-            require: true,
+            required: true,
             trim:true
         },
         classCoordinator: {
             type: String,
-            require: true,
+            required: true,
             trim:true
         },
         sclass: {
             type: String,
-            require: true,
+            required: true,
             trim:true
         },
         temail: {
             type: String,
-            require: true,
+            required: true,
             validate: {
                 validator: validator.isEmail,
                 message: '{VALUE} is not a valid email',
@@ -87,7 +93,7 @@ const studentDataSchema = new mongoose.Schema(
         },
         school: {
             type: String,
-            require: true
+            required: true
         },
         marks: [subjectSchema],
     }
@@ -96,7 +102,6 @@ const studentDataSchema = new mongoose.Schema(
 studentDataSchema.path('mobileNo').validate(function validatePhone() {
     return (this.mobileNo > 999999999);
 });
-
 
 // create collection(table)
 const studentData = new mongoose.model("studentData", studentDataSchema);

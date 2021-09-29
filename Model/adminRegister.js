@@ -1,4 +1,4 @@
-// For admin
+// For Admin Model
 
 // require
 const mongoose = require('mongoose');
@@ -11,12 +11,12 @@ const AdminSchema = new mongoose.Schema(
     {
         name: {
             type: String,
-            require: true,
+            required: true,
             trim:true
         },
         email: {
             type: String,
-            require: true,
+            required: true,
             unique: true,
             validate: {
                 validator: validator.isEmail,
@@ -26,25 +26,16 @@ const AdminSchema = new mongoose.Schema(
         },
         password: {
             type: String,
-            require: true
+            required: true,
+            trim:true
         },
-        tokens: [
-            {
-                token: {
-                    type: String,
-                    require: true
-                }
-            }
-        ]
     }
 )
 
 // generate token
 AdminSchema.methods.generateAuthToken = function () {
     // it take 2 parameter : payload => id and secrete key of 32 character
-    const token = jwt.sign({ _id: this._id.toString() }, process.env.SECRETE_KEY3);
-    // add in our database
-    this.tokens = this.tokens.concat({ token: token })
+    const token = jwt.sign({ _id: this._id.toString() }, process.env.SECRETE_KEY1);
     // save in db
     this.save().then(function () {
         console.log("token save")

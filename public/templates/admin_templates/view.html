@@ -1,0 +1,37 @@
+<div class="modal-header">
+    <h3 class="modal-title" id="modal-title">ADD CITY</h3>
+</div>
+<div class="modal-body" id="modal-body">
+
+    <div class="form-group">
+        <label for="Region" class="col-md-4 control-label">Region Name</label>
+        <div class="col-md-8">
+            <input type="text" ng-model="region" value="" class="form-control" />
+        </div>
+    </div>
+    <br><br>
+    <div class="form-group">
+        <label for="city" class="col-md-4 control-label">City Name</label>
+        <div class="col-md-8">
+            <input type="text" ng-model="city" value="" class="form-control" />
+        </div>
+    </div>
+    <br><br>
+    <div class="form-group">
+        <label for="area" class="col-md-4 control-label">Area Name</label>
+        <div class="col-md-8">
+            <input type="text" ng-model="area" value="" class="form-control" />
+        </div>
+    </div>
+    <br>
+
+
+
+
+</div>
+<div class="modal-footer">
+
+    <button class="btn btn-primary" type="button" ng-click="ok(region,city,area)">Add</button>
+    <button class="btn btn-warning" type="button" ng-click="cancelModal()">Cancel</button>
+
+</div>
