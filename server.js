@@ -32,6 +32,7 @@ app.use(bodyParser.json())
 app.use(express.static("public"));
 app.use(cookieParser())
 app.use(passport.initialize())
+
 app.use('/student',studentRoute)
 app.use('/teacher',teacherRoute)
 app.use('/admin',adminRoute)

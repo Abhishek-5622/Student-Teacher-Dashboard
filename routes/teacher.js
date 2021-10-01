@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router();
 const TeacherRegister = require('../Model/teacherRegister')
 const studentData = require('../Model/studentData')
+const schoolData = require('../Model/schoolRegister')
 
 // teacher signup
 router.post('/addTeacher', (req, res) => {
@@ -15,13 +16,13 @@ router.post('/addTeacher', (req, res) => {
         res.status(200).redirect('/');
     }).catch(function (err) {
         console.log(err);
-        res.status(400).send('error');
+        res.status(400).send('Bad Request');
     })
 
 })
 
 // login teacher
-router.post('/getTeacher', async (req, res) => {
+router.post('/getTeacher',  (req, res) => {
     const name = req.body.data.name;
     const email = req.body.data.email;
     const pass = req.body.data.password;
@@ -30,28 +31,26 @@ router.post('/getTeacher', async (req, res) => {
         password: pass,
         name: name
     }).then(function (data) {
-
         var check = data;
         if (check !== null) {
             return check.generateAuthToken()
         }
         else {
-            res.status(401).send("Error")
+            res.status(401).send("User not found")
         }
     }).then(function (data) {
+        if(data!== undefined){
         res.cookie('jwt', data, {
             expires: new Date(Date.now() + 10000000)
         })
         console.log("login successfully")
         res.redirect('/teacher-dashboard?email=' + email);
+    }
     }).catch(function (err) {
         console.log(err)
     });
 
 })
-
-
-
 
 // all student data and pagination
 router.post("/seeAllStudentData", (req, res) => {
@@ -65,7 +64,7 @@ router.post("/seeAllStudentData", (req, res) => {
         .then(function (doc) {
             res.status(200).json(doc)
         }).catch(function (err) {
-            res.status(401).send(err)
+            res.status(401).send("User Not found")
         })
 });
 
@@ -80,37 +79,54 @@ router.get('/getLength', (req, res) => {
 
 // add student details
 router.post('/addStudentDetails', (req, res) => {
-    const [maths, science, english, hindi, sst] = req.body.data.marks;
-    studentData.create({
-        rollNo: req.body.data.rollNo,
-        name: req.body.data.name,
-        date: req.body.data.date,
-        email: req.body.data.email,
-        mobileNo: req.body.data.mobileNo,
-        address: req.body.data.address,
-        city: req.body.data.city,
-        area: req.body.data.area,
-        motherName: req.body.data.motherName,
-        fatherName: req.body.data.fatherName,
-        classCoordinator: req.body.data.classCoordinator,
-        sclass: req.body.data.sclass,
-        temail: req.body.data.temail,
-        school: req.body.data.school,
-        marks: [
-            { title: 'maths', marks: maths.maths },
-            { title: 'science', marks: science.science },
-            { title: 'hindi', marks: hindi.hindi },
-            { title: 'english', marks: english.english },
-            { title: 'sst', marks: sst.sst },
-        ],
-    }).then(function (data) {
-        res.status(200).json(data)
-        console.log("Data save");
+    var schoolName = req.body.data.school;
+    schoolData.aggregate(
+        [
+            { $match: { schoolname: schoolName } }
+        ]
+    ).then(function (data) {
+        const [maths, science, english, hindi, sst] = req.body.data.marks;
+        studentData.create({
+            rollNo: req.body.data.rollNo,
+            name: req.body.data.name,
+            date: req.body.data.date,
+            email: req.body.data.email,
+            mobileNo: req.body.data.mobileNo,
+            address: req.body.data.address,
+            city: req.body.data.city,
+            area: req.body.data.area,
+            motherName: req.body.data.motherName,
+            fatherName: req.body.data.fatherName,
+            classCoordinator: req.body.data.classCoordinator,
+            sclass: req.body.data.sclass,
+            temail: req.body.data.temail,
+            school: req.body.data.school,
+            sRegion: data[0].region,
+            sArea: data[0].area,
+            sCity: data[0].city,
+            marks: [
+                { title: 'maths', marks: maths.maths },
+                { title: 'science', marks: science.science },
+                { title: 'hindi', marks: hindi.hindi },
+                { title: 'english', marks: english.english },
+                { title: 'sst', marks: sst.sst },
+            ]
+            
+        }).then(function (data) {
+            console.log('lom',data)
+            res.status(200).json(data)
+            console.log("Data save");
+        })
+            .catch(function (err) {
+                console.log(err);
+                res.status(400).json({ error: err })
+            });
+    }).catch(function (err) {
+        console.log(err)
     })
-        .catch(function (err) {
-            console.log(err);
-            res.status(400).json({ error: err })
-        });
+
+
+
 })
 
 // delete student

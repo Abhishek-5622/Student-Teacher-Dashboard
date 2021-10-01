@@ -79,21 +79,10 @@ router.get('/topStudent', (req, res) => {
 // fetch top 3 students of that region 
 router.post('/topRegionStudent', (req, res) => {
     var regionName = req.body.data.region;
-    schoolData.aggregate(
-        [
-            { $match: { region: regionName } }
-        ]
-    ).then(function (data) {
-        var schoolList = []
-        for (let i = 0; i < data.length; i++) {
-            schoolList.push(data[i].schoolname);
-        }
         var schoolAreaPip = [
             {
                 $match: {
-                    school: {
-                        $in: schoolList
-                    }
+                    sRegion: regionName
                 }
             },
             { $unwind: "$marks" },
@@ -117,29 +106,16 @@ router.post('/topRegionStudent', (req, res) => {
         }).catch(function (err) {
             console.log(err)
         })
-    }).catch(function (err) {
-        console.log(err)
-    })
+  
 })
 
 // fetch top 3 students of that area 
 router.post('/topAreaStudent', (req, res) => {
     var areaName = req.body.data.area;
-    schoolData.aggregate(
-        [
-            { $match: { area: areaName } }
-        ]
-    ).then(function (data) {
-        var schoolList = []
-        for (let i = 0; i < data.length; i++) {
-            schoolList.push(data[i].schoolname);
-        }
         var schoolAreaPip = [
             {
                 $match: {
-                    school: {
-                        $in: schoolList
-                    }
+                    sArea: areaName
                 }
             },
             { $unwind: "$marks" },
@@ -163,30 +139,17 @@ router.post('/topAreaStudent', (req, res) => {
         }).catch(function (err) {
             console.log(err)
         })
-    }).catch(function (err) {
-        console.log(err)
-    })
+   
 
 })
 
 // fetch top 3 students of that city 
 router.post('/city', (req, res) => {
     var cityName = req.body.data.city;
-    schoolData.aggregate(
-        [
-            { $match: { city: cityName } }
-        ]
-    ).then(function (data) {
-        var schoolList = []
-        for (let i = 0; i < data.length; i++) {
-            schoolList.push(data[i].schoolname);
-        }
         var schoolAreaPip = [
             {
                 $match: {
-                    school: {
-                        $in: schoolList
-                    }
+                    sCity:cityName
                 }
             },
             { $unwind: "$marks" },
@@ -210,9 +173,7 @@ router.post('/city', (req, res) => {
         }).catch(function (err) {
             console.log(err)
         })
-    }).catch(function (err) {
-        console.log(err)
-    })
+   
 })
 
 // fetch all students on the basic of percentage 

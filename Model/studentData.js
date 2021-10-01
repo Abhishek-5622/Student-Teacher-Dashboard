@@ -22,8 +22,7 @@ const studentDataSchema = new mongoose.Schema(
     {
         rollNo: {
             type: Number,
-            required: true,
-            unique:true
+            required: true
         },
         name: {
             type: String,
@@ -95,7 +94,20 @@ const studentDataSchema = new mongoose.Schema(
             type: String,
             required: true
         },
+        sRegion:{
+            type:String,
+            required: true
+            },
+        sArea:{
+            type:String,
+            required: true
+        },
+        sCity:{
+            type:String,
+            required: true
+        },
         marks: [subjectSchema],
+        
     }
 )
 

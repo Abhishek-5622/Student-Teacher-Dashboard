@@ -21,7 +21,7 @@ function myPassport(passport, role) {
     opts.jwtFromRequest = cookieExtractor;
 
     passport.use(new JwtStrategy(opts, function (jwtPayload, done) {
-        console.log(JSON.parse(JSON.stringify(jwtPayload)))
+
         var model = '';
         if (role === 'student') {
             model = UserRegister;

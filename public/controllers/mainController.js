@@ -20,5 +20,4 @@ app.controller('mainController', function ($scope, $http, $routeParams, $uibModa
 
     }
 
-
 });

@@ -10,6 +10,7 @@ app.controller("ModelHandlerController", function ($scope, $uibModalInstance, $h
 
     // Add city n region and area
     $scope.ok = function (region, city, area) {
+        
         if (region != undefined && city != undefined && area != undefined) {
             var data = {
                 city: city,

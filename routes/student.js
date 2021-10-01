@@ -14,7 +14,7 @@ router.post('/add', (req, res) => {
         res.status(200).send('hi');
     }).catch(function (err) {
         console.log(err)
-        res.status(400).send('error');
+        res.status(400).send('Bad Request');
     })
     
 })
@@ -36,14 +36,17 @@ router.post('/getuser',  (req, res) => {
                 return check.generateAuthToken()
             }
             else {
-                res.status(401).send("Error")
+                res.status(401).send("User Not Found")
             }
         }).then(function (data) {
+        
+            if(data!== undefined){
             res.cookie('jwt', data, {
                 expires: new Date(Date.now() + 10000000)
             })
             console.log("login successfully")
-            res.redirect('/student-dashboard?email=' + email);
+            res.status(200).redirect('/student-dashboard?email=' + email);
+        }
         }).catch(function (err) {
             console.log(err)
         });
@@ -55,5 +58,6 @@ router.get('/logout', (req, res) => {
     res.cookie("jwt", "", { maxAge: 1 });
     res.status(200).redirect("/");
 })
+
 
 module.exports = router;

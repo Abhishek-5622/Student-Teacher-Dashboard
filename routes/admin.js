@@ -40,19 +40,20 @@ router.post('/adminAuth', async (req, res) => {
                 return check.generateAuthToken()
             }
             else {
-                res.status(401).send("Error")
+                res.status(401).send("User Not Found")
             }
         }).then(function (data) {
+            if(data!== undefined){
             res.cookie('jwt', data, {
                 expires: new Date(Date.now() + 10000000)
             })
             console.log("Admin login successfully")
             return res.status(200).redirect('/auth-dashboard');
+        }
         }).catch(function (err) {
             console.log(err)
             res.status(401).send('Error')
         });
-      
 })
 
 // add school details
@@ -116,7 +117,7 @@ router.post('/deleteSchool', (req, res) => {
 
 // add city in db
 router.post('/addcity', (req, res) => {
-    CityRegister.update({ city: req.body.data.city, region: req.body.data.region },
+    CityRegister.updateOne({ city: req.body.data.city, region: req.body.data.region },
         { city: req.body.data.city, region: req.body.data.region }, { upsert: true }).then(
             function (data) {
                 console.log("Add City")
@@ -129,7 +130,7 @@ router.post('/addcity', (req, res) => {
 
 // add area in db
 router.post('/addArea', (req, res) => {
-    AreaRegister.update({ area: req.body.data2.area, city: req.body.data2.city }, { area: req.body.data2.area, city: req.body.data2.city }
+    AreaRegister.updateOne({ area: req.body.data2.area, city: req.body.data2.city }, { area: req.body.data2.area, city: req.body.data2.city }
         , { upsert: true }).then(
             function (data) {
                 console.log('areadata', data)
